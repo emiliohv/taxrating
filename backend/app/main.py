@@ -113,3 +113,6 @@ async def delete_gestoria(id: str, current_user: dict = Depends(get_current_user
     if result.deleted_count == 1:
         return {"message": "Gestoría eliminada correctamente"}
     raise HTTPException(status_code=404, detail="Gestoría no encontrada")
+@app.get("/")
+def read_root():
+    return {"message": "TaxRating backend funcionando correctamente"}
