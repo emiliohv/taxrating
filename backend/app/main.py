@@ -21,7 +21,8 @@ app.add_middleware(
 )
 
 # Conexión MongoDB
-client = MongoClient("mongodb://localhost:27017/")
+MONGODB_URL = os.getenv("MONGODB_URL")
+client = MongoClient(MONGODB_URL)
 db = client["taxrating"]
 collection = db["gestorias"]
 
