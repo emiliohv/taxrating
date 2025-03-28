@@ -95,10 +95,14 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 @app.get("/gestorias")
 async def get_all():
-    gestorias = list(collection.find())
-    for g in gestorias:
-        g["_id"] = str(g["_id"])
-    return gestorias
+    try:
+        gestorias = list(collection.find())
+        for g in gestorias:
+            g["_id"] = str(g["_id"])
+        return gestorias
+    except Exception as e:
+        print(f"❌ Error al obtener gestorías: {e}")
+        raise HTTPException(status_code=500, detail="Error al obtener gestorías")
 
 @app.post("/gestorias")
 async def add_gestoria(gestoria: Gestoria):
@@ -116,3 +120,8 @@ async def delete_gestoria(id: str, current_user: dict = Depends(get_current_user
 @app.get("/")
 def read_root():
     return {"message": "TaxRating backend funcionando correctamente"}
+try:
+    client.server_info()  # Esto lanza error si no puede conectar
+    print("✅ Conexión con MongoDB Atlas establecida correctamente")
+except Exception as e:
+    print(f"❌ Error conectando con MongoDB Atlas: {e}")
