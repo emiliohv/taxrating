@@ -17,7 +17,7 @@ const Admin = () => {
       params.append("username", credentials.username);
       params.append("password", credentials.password);
 
-      const res = await axios.post("http://localhost:8000/token", params);
+      const res = await axios.post("https://taxrating-backend.onrender.com/token", params);
       localStorage.setItem("token", res.data.access_token);
       setToken(res.data.access_token);
       setError("");
@@ -28,7 +28,7 @@ const Admin = () => {
 
   const fetchGestorias = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/gestorias");
+      const res = await axios.get("https://taxrating-backend.onrender.com/gestorias");
       setGestorias(res.data);
     } catch (err) {
       console.error("Error al cargar gestorías", err);
@@ -37,7 +37,7 @@ const Admin = () => {
 
   const deleteGestoria = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/gestorias/${id}`, {
+      await axios.delete(`https://taxrating-backend.onrender.com/gestorias/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setGestorias(gestorias.filter((g) => g._id?.$oid !== id && g._id !== id));

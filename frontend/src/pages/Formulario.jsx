@@ -26,7 +26,7 @@ const Formulario = () => {
       return;
     }
     try {
-      await axios.post("http://localhost:8000/gestorias", form);
+      await axios.post("https://taxrating-backend.onrender.com/gestorias", form);
       setEnviado(true);
       setError("");
     } catch {

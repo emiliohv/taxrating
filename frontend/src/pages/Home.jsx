@@ -10,7 +10,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/gestorias")
+      .get("https://taxrating-backend.onrender.com/gestorias")
       .then((res) => setGestorias(res.data))
       .catch((err) => console.error("Error al cargar gestorías", err));
   }, []);
