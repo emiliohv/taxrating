@@ -9,14 +9,25 @@ const Home = () => {
   const [filtered, setFiltered] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [province, setProvince] = useState("");
-  const [minRating, setMinRating] = useState(0);
+  const [minRatings, setMinRatings] = useState({});
   const [sortOrder, setSortOrder] = useState("");
+  const [provinces, setProvinces] = useState([]);
+
+  const services = [
+    "IRPF",
+    "IS",
+    "IVA",
+    "Consolidación_Fiscal",
+    "Asesoría_Internacional"
+  ];
 
   const fetchGestorias = async () => {
     try {
       const res = await axios.get("https://taxrating-backend.onrender.com/gestorias");
       setGestorias(res.data);
       setFiltered(res.data);
+      const uniqueProvinces = [...new Set(res.data.map(g => g.province))];
+      setProvinces(uniqueProvinces);
     } catch (err) {
       console.error("Error al cargar gestorías", err);
     }
@@ -33,7 +44,14 @@ const Home = () => {
       data = data.filter((g) => g.province === province);
     }
 
-    data = data.filter((g) => (g.ratingGlobal || 0) >= minRating);
+    services.forEach(service => {
+      if (minRatings[service] != null) {
+        data = data.filter(g => {
+          const rating = g.ratings?.[service] || 0;
+          return rating >= minRatings[service];
+        });
+      }
+    });
 
     if (sortOrder === "asc") {
       data.sort((a, b) => (a.ratingGlobal || 0) - (b.ratingGlobal || 0));
@@ -41,10 +59,12 @@ const Home = () => {
       data.sort((a, b) => (b.ratingGlobal || 0) - (a.ratingGlobal || 0));
     } else if (sortOrder === "alpha") {
       data.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortOrder === "alphaDesc") {
+      data.sort((a, b) => b.name.localeCompare(a.name));
     }
 
     setFiltered(data);
-  }, [province, minRating, sortOrder, gestorias]);
+  }, [province, minRatings, sortOrder, gestorias]);
 
   return (
     <>
@@ -63,41 +83,53 @@ const Home = () => {
         </div>
 
         {showFilters && (
-          <div className="bg-white shadow-md rounded p-4 mb-6 flex flex-col md:flex-row justify-between gap-4">
-            <div className="w-full md:w-1/3">
-              <label className="block text-sm font-medium">Provincia</label>
-              <input
-                type="text"
-                value={province}
-                onChange={(e) => setProvince(e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded shadow-sm"
-              />
+          <div className="bg-white shadow-md rounded p-4 mb-6 flex flex-col gap-4">
+            <div className="flex flex-wrap gap-4 justify-between">
+              <div className="w-full md:w-1/3">
+                <label className="block text-sm font-medium">Provincia</label>
+                <select
+                  value={province}
+                  onChange={(e) => setProvince(e.target.value)}
+                  className="mt-1 block w-full border-gray-300 rounded shadow-sm"
+                >
+                  <option value="">Todas</option>
+                  {provinces.map((prov, idx) => (
+                    <option key={idx} value={prov}>{prov}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="w-full md:w-1/3">
+                <label className="block text-sm font-medium">Ordenar por</label>
+                <select
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value)}
+                  className="mt-1 block w-full border-gray-300 rounded shadow-sm"
+                >
+                  <option value="">Ninguno</option>
+                  <option value="asc">Valoración ascendente</option>
+                  <option value="desc">Valoración descendente</option>
+                  <option value="alpha">Nombre A-Z</option>
+                  <option value="alphaDesc">Nombre Z-A</option>
+                </select>
+              </div>
             </div>
-            <div className="w-full md:w-1/3">
-              <label className="block text-sm font-medium">Valoración mínima</label>
-              <input
-                type="range"
-                min="0"
-                max="5"
-                step="0.1"
-                value={minRating}
-                onChange={(e) => setMinRating(parseFloat(e.target.value))}
-                className="w-full"
-              />
-              <span>{minRating.toFixed(1)}</span>
-            </div>
-            <div className="w-full md:w-1/3">
-              <label className="block text-sm font-medium">Ordenar por</label>
-              <select
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded shadow-sm"
-              >
-                <option value="">Ninguno</option>
-                <option value="asc">Valoración ascendente</option>
-                <option value="desc">Valoración descendente</option>
-                <option value="alpha">Orden alfabético</option>
-              </select>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {services.map(service => (
+                <div key={service}>
+                  <label className="block text-sm font-medium">{service}</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="5"
+                    step="0.1"
+                    value={minRatings[service] || 0}
+                    onChange={(e) => setMinRatings(prev => ({ ...prev, [service]: parseFloat(e.target.value) }))}
+                    className="w-full"
+                  />
+                  <span>{(minRatings[service] || 0).toFixed(1)}</span>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -109,8 +141,11 @@ const Home = () => {
               <h2 className="text-xl font-semibold mt-2">{g.name}</h2>
               <p className="text-sm text-gray-500">{g.province}</p>
               <p className="text-sm font-medium text-yellow-600">
-                Valoración: {g.ratingGlobal?.toFixed(1) || "N/A"}
+                Valoración Global: {g.ratingGlobal?.toFixed(1) || "N/A"}
               </p>
+              {Object.entries(g.ratings || {}).map(([key, value]) => (
+                <p key={key} className="text-sm text-gray-600">{key}: {value?.toFixed(1)}</p>
+              ))}
               {g.website && (
                 <a
                   href={g.website}
