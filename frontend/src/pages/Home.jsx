@@ -79,7 +79,7 @@ const Home = () => {
 
   return (
     <>
-      <Navbar />
+      
       <div className="p-6">
         <h1 className="text-3xl font-bold text-center mb-2">TaxRating</h1>
         <p className="text-center mb-4">Valoraciones objetivas de gestorías y asesorías fiscales</p>
