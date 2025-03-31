@@ -79,7 +79,7 @@ const Home = () => {
 
   return (
     <>
-      
+      <Navbar />
       <div className="p-6">
         <h1 className="text-3xl font-bold text-center mb-2">TaxRating</h1>
         <p className="text-center mb-4">Valoraciones objetivas de gestorías y asesorías fiscales</p>
@@ -154,7 +154,7 @@ const Home = () => {
                 Valoración Global: {g.ratingGlobal != null ? g.ratingGlobal.toFixed(1) : "Sin valoraciones"}
               </p>
               <p className="text-sm text-gray-600">
-                Valoraciones: {Number.isInteger(g.Valoraciones) ? g.Valoraciones : "Sin valoraciones"}
+                Valoraciones: {g.Valoraciones && g.Valoraciones > 0 ? parseInt(g.Valoraciones) : "Sin valoraciones"}
               </p>
               <button
                 onClick={() => toggleExpand(idx)}
