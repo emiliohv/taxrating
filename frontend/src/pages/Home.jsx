@@ -12,6 +12,7 @@ const Home = () => {
   const [minRatings, setMinRatings] = useState({});
   const [sortOrder, setSortOrder] = useState("");
   const [provinces, setProvinces] = useState([]);
+  const [expanded, setExpanded] = useState({});
 
   const services = [
     "IRPF",
@@ -66,6 +67,16 @@ const Home = () => {
     setFiltered(data);
   }, [province, minRatings, sortOrder, gestorias]);
 
+  const toggleExpand = (idx) => {
+    setExpanded(prev => ({ ...prev, [idx]: !prev[idx] }));
+  };
+
+  const getColor = (value) => {
+    if (value >= 4) return "text-green-600";
+    if (value >= 2) return "text-yellow-600";
+    return "text-red-600";
+  };
+
   return (
     <>
       <Navbar />
@@ -73,64 +84,63 @@ const Home = () => {
         <h1 className="text-3xl font-bold text-center mb-2">TaxRating</h1>
         <p className="text-center mb-4">Valoraciones objetivas de gestorías y asesorías fiscales</p>
 
-        <div className="flex justify-center mb-6">
-          <button
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            {showFilters ? "Ocultar filtros" : "Mostrar filtros"}
-          </button>
+        <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+          <div className="w-full md:w-1/3">
+            <label className="block text-sm font-medium">Provincia</label>
+            <select
+              value={province}
+              onChange={(e) => setProvince(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded shadow-sm"
+            >
+              <option value="">Todas</option>
+              {provinces.map((prov, idx) => (
+                <option key={idx} value={prov}>{prov}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="w-full md:w-1/3">
+            <label className="block text-sm font-medium">Ordenar por</label>
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              className="mt-1 block w-full border-gray-300 rounded shadow-sm"
+            >
+              <option value="">Ninguno</option>
+              <option value="asc">Valoración ascendente</option>
+              <option value="desc">Valoración descendente</option>
+              <option value="alpha">Nombre A-Z</option>
+              <option value="alphaDesc">Nombre Z-A</option>
+            </select>
+          </div>
+
+          <div className="w-full md:w-1/3 flex justify-center">
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded mt-5 md:mt-0"
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              {showFilters ? "Ocultar filtros" : "Mostrar filtros"}
+            </button>
+          </div>
         </div>
 
         {showFilters && (
-          <div className="bg-white shadow-md rounded p-4 mb-6 flex flex-col gap-4">
-            <div className="flex flex-wrap gap-4 justify-between">
-              <div className="w-full md:w-1/3">
-                <label className="block text-sm font-medium">Provincia</label>
-                <select
-                  value={province}
-                  onChange={(e) => setProvince(e.target.value)}
-                  className="mt-1 block w-full border-gray-300 rounded shadow-sm"
-                >
-                  <option value="">Todas</option>
-                  {provinces.map((prov, idx) => (
-                    <option key={idx} value={prov}>{prov}</option>
-                  ))}
-                </select>
+          <div className="bg-white shadow-md rounded p-4 mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {services.map(service => (
+              <div key={service}>
+                <label className="block text-sm font-medium">{service}</label>
+                <input
+                  type="range"
+                  min="0"
+                  max="5"
+                  step="1"
+                  value={minRatings[service] || 0}
+                  onChange={(e) => setMinRatings(prev => ({ ...prev, [service]: parseInt(e.target.value) }))}
+                  className="w-full"
+                />
+                <span>{minRatings[service] || 0}</span>
               </div>
-
-              <div className="w-full md:w-1/3">
-                <label className="block text-sm font-medium">Ordenar por</label>
-                <select
-                  value={sortOrder}
-                  onChange={(e) => setSortOrder(e.target.value)}
-                  className="mt-1 block w-full border-gray-300 rounded shadow-sm"
-                >
-                  <option value="">Ninguno</option>
-                  <option value="asc">Valoración ascendente</option>
-                  <option value="desc">Valoración descendente</option>
-                  <option value="alpha">Nombre A-Z</option>
-                  <option value="alphaDesc">Nombre Z-A</option>
-                </select>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {services.map(service => (
-                <div key={service}>
-                  <label className="block text-sm font-medium">{service}</label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="5"
-                    step="0.1"
-                    value={minRatings[service] || 0}
-                    onChange={(e) => setMinRatings(prev => ({ ...prev, [service]: parseFloat(e.target.value) }))}
-                    className="w-full"
-                  />
-                  <span>{(minRatings[service] || 0).toFixed(1)}</span>
-                </div>
-              ))}
-            </div>
+            ))}
           </div>
         )}
 
@@ -140,12 +150,25 @@ const Home = () => {
               <img src={g.image} alt={g.name} className="w-full h-40 object-cover rounded" />
               <h2 className="text-xl font-semibold mt-2">{g.name}</h2>
               <p className="text-sm text-gray-500">{g.province}</p>
-              <p className="text-sm font-medium text-yellow-600">
-                Valoración Global: {g.ratingGlobal?.toFixed(1) || "N/A"}
+              <p className={`text-sm font-medium ${getColor(g.ratingGlobal)}`}>
+                Valoración Global: {g.ratingGlobal != null ? g.ratingGlobal.toFixed(1) : "Sin valoraciones"}
               </p>
-              {Object.entries(g.ratings || {}).map(([key, value]) => (
-                <p key={key} className="text-sm text-gray-600">{key}: {value?.toFixed(1)}</p>
-              ))}
+              <p className="text-sm text-gray-600">
+                Valoraciones: {Number.isInteger(g.Valoraciones) ? g.Valoraciones : "Sin valoraciones"}
+              </p>
+              <button
+                onClick={() => toggleExpand(idx)}
+                className="text-blue-600 mt-2 underline"
+              >
+                {expanded[idx] ? "Ocultar servicios" : "Mostrar servicios valorados"}
+              </button>
+              {expanded[idx] && (
+                <div className="mt-2">
+                  {Object.entries(g.ratings || {}).map(([key, value]) => (
+                    <p key={key} className={`text-sm ${getColor(value)}`}>{key}: {value?.toFixed(1)}</p>
+                  ))}
+                </div>
+              )}
               {g.website && (
                 <a
                   href={g.website}
