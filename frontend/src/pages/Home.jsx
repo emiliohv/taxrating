@@ -4,6 +4,13 @@ import Navbar from "../components/Navbar";
 import { FaGlobe, FaMapMarkerAlt } from "react-icons/fa";
 import "../index.css";
 
+const getColorClass = (valoracion) => {
+  if (valoracion >= 4) return "text-green-600";
+  if (valoracion >= 2.5) return "text-yellow-600";
+  if (valoracion > 0) return "text-red-600";
+  return "text-gray-600";
+};
+
 const Home = () => {
   const [gestorias, setGestorias] = useState([]);
   const [provincias, setProvincias] = useState([]);
@@ -45,7 +52,7 @@ const Home = () => {
 
   return (
     <div>
-     
+      <Navbar />
       <div className="p-6">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-blue-700">TaxRating</h1>
@@ -123,7 +130,7 @@ const Home = () => {
                 <p className="text-sm text-gray-500 flex items-center gap-1">
                   <FaMapMarkerAlt /> {g.province}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className={`text-sm ${getColorClass(g.ratingGlobal)} font-semibold`}>
                   Valoración Global: {g.ratingGlobal != null ? g.ratingGlobal.toFixed(1) : "Sin valoraciones"}
                 </p>
                 <p className="text-sm text-gray-600">
@@ -134,7 +141,7 @@ const Home = () => {
                   <div className="mt-2">
                     {Object.entries(g.ratings || {}).map(([key, value]) => (
                       key !== "Valoraciones" && key !== "Valoración Global" && (
-                        <p key={key} className="text-sm">{key}: {value?.toFixed(1)}</p>
+                        <p key={key} className={`text-sm ${getColorClass(value)}`}>{key}: {value?.toFixed(1)}</p>
                       )
                     ))}
                   </div>
