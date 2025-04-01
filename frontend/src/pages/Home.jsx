@@ -3,139 +3,123 @@ import axios from "axios";
 import Navbar from "../components/Navbar";
 import { FaGlobe, FaMapMarkerAlt } from "react-icons/fa";
 import "../index.css";
+import { useNavigate } from "react-router-dom";
 
-const Home = () => {
+const Admin = () => {
   const [gestorias, setGestorias] = useState([]);
-  const [filteredGestorias, setFilteredGestorias] = useState([]);
-  const [showFilters, setShowFilters] = useState(false);
-  const [provinces, setProvinces] = useState([]);
-  const [selectedProvince, setSelectedProvince] = useState("");
-  const [minRatings, setMinRatings] = useState({});
-  const [sortOption, setSortOption] = useState("");
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(!!token);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    axios.get("https://taxrating-backend.onrender.com/gestorias")
-      .then(res => {
-        setGestorias(res.data);
-        setFilteredGestorias(res.data);
-        const provs = [...new Set(res.data.map(g => g.province))];
-        setProvinces(provs);
-      })
-      .catch(err => console.error("Error al cargar gestorías", err));
-  }, []);
-
-  useEffect(() => {
-    let filtered = gestorias.filter(g => {
-      if (selectedProvince && g.province !== selectedProvince) return false;
-      for (let key in minRatings) {
-        if ((g.ratings?.[key] || 0) < minRatings[key]) return false;
-      }
-      return true;
-    });
-
-    if (sortOption === "alphaAsc") {
-      filtered.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sortOption === "alphaDesc") {
-      filtered.sort((a, b) => b.name.localeCompare(a.name));
-    } else if (sortOption === "ratingAsc") {
-      filtered.sort((a, b) => (a.ratingGlobal || 0) - (b.ratingGlobal || 0));
-    } else if (sortOption === "ratingDesc") {
-      filtered.sort((a, b) => (b.ratingGlobal || 0) - (a.ratingGlobal || 0));
+  const fetchGestorias = async () => {
+    try {
+      const res = await axios.get("https://taxrating-backend.onrender.com/gestorias", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setGestorias(res.data);
+    } catch (err) {
+      console.error("Error al cargar gestorías", err);
     }
-
-    setFilteredGestorias(filtered);
-  }, [gestorias, selectedProvince, minRatings, sortOption]);
-
-  const handleRatingChange = (key, value) => {
-    setMinRatings(prev => ({ ...prev, [key]: parseFloat(value) }));
   };
 
-  const ratingColor = (val) => {
-    if (val >= 4) return "text-green-600";
-    if (val >= 2.5) return "text-yellow-600";
-    if (val > 0) return "text-red-600";
-    return "text-gray-500";
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchGestorias();
+    }
+  }, [isLoggedIn]);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post("https://taxrating-backend.onrender.com/token", {
+        username,
+        password
+      }, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
+      localStorage.setItem("token", res.data.access_token);
+      setToken(res.data.access_token);
+      setIsLoggedIn(true);
+    } catch (err) {
+      alert("Credenciales incorrectas");
+    }
   };
 
-  const ratingKeys = Object.keys(
-    gestorias.reduce((acc, g) => ({ ...acc, ...g.ratings }), {})
-  ).filter(k => k !== "Valoraciones" && k !== "Valoración Global");
+  const deleteGestoria = async (id) => {
+    try {
+      await axios.delete(`https://taxrating-backend.onrender.com/gestorias/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setGestorias(gestorias.filter(g => g._id !== id));
+    } catch (err) {
+      console.error("Error al eliminar gestoría", err);
+    }
+  };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow-md w-80">
+          <h2 className="text-xl font-semibold mb-4 text-center">Acceso Administrador</h2>
+          <input
+            type="text"
+            placeholder="Usuario"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded mb-3"
+          />
+          <input
+            type="password"
+            placeholder="Contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded mb-4"
+          />
+          <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded">
+            Iniciar sesión
+          </button>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div>
-      
-      <div className="p-4">
-      <div className="flex flex-wrap justify-between items-center mb-4">
-          <div>
-            <select
-              value={selectedProvince}
-              onChange={(e) => setSelectedProvince(e.target.value)}
-              className="border p-2 rounded"
-            >
-              <option value="">Todas las provincias</option>
-              {availableProvinces.map((prov, i) => (
-                <option key={i} value={prov}>{prov}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="space-x-2">
-            <button
-              onClick={() => setSortOption("asc")}
-              className="bg-gray-200 px-3 py-1 rounded"
-            >A-Z</button>
-            <button
-              onClick={() => setSortOption("desc")}
-              className="bg-gray-200 px-3 py-1 rounded"
-            >Z-A</button>
-            <button
-              onClick={() => setSortOption("val")}
-              className="bg-gray-200 px-3 py-1 rounded"
-            >Mejor valoradas</button>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-            >{showFilters ? "Ocultar filtros" : "Mostrar filtros"}</button>
-          </div>
-        </div>
-
-        {showFilters && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
-            {ratingKeys.map((key, idx) => (
-              <div key={idx}>
-                <label>{key}</label>
-                <input type="range" min="0" max="5" step="0.1" value={minRatings[key] || 0} onChange={e => handleRatingChange(key, e.target.value)} className="w-full" />
-                <p>{minRatings[key] || 0}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredGestorias.map((g, idx) => (
+      <Navbar />
+      <div className="p-6">
+        <h1 className="text-2xl font-bold text-center mb-4">Panel de Administración</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {gestorias.map((g, idx) => (
             <div key={idx} className="bg-white rounded-lg shadow-md p-4">
               <img src={g.image} alt={g.name} className="w-full h-40 object-cover rounded" />
-              <h2 className="text-xl font-bold mt-2">{g.name}</h2>
-              <p className="text-sm text-gray-600 flex items-center"><FaMapMarkerAlt className="mr-1" /> {g.province}</p>
-              {g.website && (
-                <p className="text-sm text-blue-600 flex items-center"><FaGlobe className="mr-1" /><a href={g.website} target="_blank" rel="noreferrer">Sitio web</a></p>
-              )}
-              <p className={`text-sm ${ratingColor(g.ratingGlobal)}`}>Valoración Global: {g.ratingGlobal != null ? g.ratingGlobal.toFixed(1) : "Sin valoraciones"}</p>
-              <p className="text-sm text-gray-600">
-                Valoraciones: {g.ratings?.["Valoraciones"] > 0 ? parseInt(g.ratings["Valoraciones"]) : "Sin valoraciones"}
+              <h2 className="text-xl font-semibold mt-2">{g.name}</h2>
+              <p className="text-sm text-gray-500 flex items-center gap-1">
+                <FaMapMarkerAlt /> {g.province}
               </p>
-              {g.ratings && Object.keys(g.ratings).length > 0 && (
-                <details className="mt-2">
-                  <summary className="cursor-pointer text-sm text-blue-600">Ver servicios valorados</summary>
-                  <div className="mt-2">
-                    {Object.entries(g.ratings).map(([key, value]) => (
-                      key !== "Valoraciones" && key !== "Valoración Global" && (
-                        <p key={key} className={`text-sm ${ratingColor(value)}`}>{key}: {value.toFixed(1)}</p>
-                      )
-                    ))}
-                  </div>
-                </details>
-              )}
+              <p className="text-sm text-gray-600">
+                Valoración Global: {g.ratingGlobal != null ? g.ratingGlobal.toFixed(1) : "Sin valoraciones"}
+              </p>
+              <p className="text-sm text-gray-600">
+                Valoraciones: {g.Valoraciones && g.Valoraciones > 0 ? parseInt(g.Valoraciones) : "Sin valoraciones"}
+              </p>
+              <details className="mt-2">
+                <summary className="cursor-pointer text-blue-600">Ver servicios valorados</summary>
+                <div className="mt-2">
+                  {Object.entries(g.ratings || {}).map(([key, value]) => (
+                    key !== "Valoraciones" && key !== "Valoración Global" && (
+                      <p key={key} className="text-sm">{key}: {value?.toFixed(1)}</p>
+                    )
+                  ))}
+                </div>
+              </details>
+              <button
+                onClick={() => deleteGestoria(g._id)}
+                className="text-red-500 mt-2 underline"
+              >
+                Eliminar
+              </button>
             </div>
           ))}
         </div>
@@ -144,6 +128,4 @@ const Home = () => {
   );
 };
 
-export default Home;
-
-
+export default Admin;
