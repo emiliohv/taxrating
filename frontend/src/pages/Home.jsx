@@ -154,7 +154,7 @@ const Home = () => {
                   )}
                   {g.location && (
                     <a href={`https://www.google.com/maps?q=${encodeURIComponent(g.location)}`} target="_blank" rel="noopener noreferrer" className="text-red-500 flex items-center gap-1">
-                      <FaMapMarkerAlt /> Mapa
+                      <FaMapMarkerAlt /> Ubicación
                     </a>
                   )}
                 </div>
