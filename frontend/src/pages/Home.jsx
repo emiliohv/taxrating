@@ -63,30 +63,39 @@ const Home = () => {
 
   return (
     <div>
-      <Navbar />
+      
       <div className="p-4">
-        <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-wrap justify-between items-center mb-4">
           <div>
-            <label className="mr-2 font-semibold">Provincia:</label>
-            <select value={selectedProvince} onChange={e => setSelectedProvince(e.target.value)} className="p-1 border rounded">
-              <option value="">Todas</option>
-              {provinces.map((prov, idx) => (
-                <option key={idx} value={prov}>{prov}</option>
+            <select
+              value={selectedProvince}
+              onChange={(e) => setSelectedProvince(e.target.value)}
+              className="border p-2 rounded"
+            >
+              <option value="">Todas las provincias</option>
+              {availableProvinces.map((prov, i) => (
+                <option key={i} value={prov}>{prov}</option>
               ))}
             </select>
           </div>
-          <div className="flex gap-2 items-center">
-            <label className="font-semibold">Ordenar por:</label>
-            <select value={sortOption} onChange={e => setSortOption(e.target.value)} className="p-1 border rounded">
-              <option value="">Ninguno</option>
-              <option value="alphaAsc">Nombre A-Z</option>
-              <option value="alphaDesc">Nombre Z-A</option>
-              <option value="ratingAsc">Valoración Menor</option>
-              <option value="ratingDesc">Valoración Mayor</option>
-            </select>
-            <button onClick={() => setShowFilters(!showFilters)} className="bg-blue-500 text-white px-2 py-1 rounded">
-              {showFilters ? "Ocultar filtros" : "Mostrar filtros"}
-            </button>
+
+          <div className="space-x-2">
+            <button
+              onClick={() => setSortOption("asc")}
+              className="bg-gray-200 px-3 py-1 rounded"
+            >A-Z</button>
+            <button
+              onClick={() => setSortOption("desc")}
+              className="bg-gray-200 px-3 py-1 rounded"
+            >Z-A</button>
+            <button
+              onClick={() => setSortOption("val")}
+              className="bg-gray-200 px-3 py-1 rounded"
+            >Mejor valoradas</button>
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+            >{showFilters ? "Ocultar filtros" : "Mostrar filtros"}</button>
           </div>
         </div>
 
