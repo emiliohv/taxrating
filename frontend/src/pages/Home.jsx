@@ -10,6 +10,7 @@ const Home = () => {
   const [provinciaSeleccionada, setProvinciaSeleccionada] = useState("");
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [orden, setOrden] = useState("");
+  const [filtrosValoracion, setFiltrosValoracion] = useState({});
 
   useEffect(() => {
     axios.get("https://taxrating-backend.onrender.com/gestorias")
@@ -23,6 +24,9 @@ const Home = () => {
 
   const gestorFiltrado = gestor => {
     if (provinciaSeleccionada && gestor.province !== provinciaSeleccionada) return false;
+    for (let [key, val] of Object.entries(filtrosValoracion)) {
+      if ((gestor.ratings?.[key] || 0) < val) return false;
+    }
     return true;
   };
 
@@ -34,13 +38,18 @@ const Home = () => {
     return 0;
   });
 
+  const serviciosValorados = [...new Set(
+    gestorias.flatMap(g => Object.keys(g.ratings || {}))
+      .filter(s => s !== "Valoraciones" && s !== "Valoración Global")
+  )];
+
   return (
     <div>
-      
+     
       <div className="p-6">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-blue-700">TaxRating</h1>
-          <p className="text-gray-600 text-lg">Valoración objetiva de gestorías y asesorías fiscales, realizada por antiguos empleados de la Agencia Tributaria</p>
+          <p className="text-gray-600 text-lg">Valoración objetiva de gestorías y asesorías fiscales, realizada por antiguos trabajadores de la Agencia Tributaria</p>
         </div>
         <div className="flex flex-wrap justify-between items-center gap-6 mb-6">
           <div className="flex-1 min-w-[200px]">
@@ -81,32 +90,58 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {gestorOrdenado.map((g, idx) => (
-            <div key={idx} className="bg-white rounded-lg shadow-md p-4">
-              <img src={g.image} alt={g.name} className="w-full h-40 object-cover rounded" />
-              <h2 className="text-xl font-semibold mt-2">{g.name}</h2>
-              <p className="text-sm text-gray-500 flex items-center gap-1">
-                <FaMapMarkerAlt /> {g.province}
-              </p>
-              <p className="text-sm text-gray-600">
-                Valoración Global: {g.ratingGlobal != null ? g.ratingGlobal.toFixed(1) : "Sin valoraciones"}
-              </p>
-              <p className="text-sm text-gray-600">
-                Valoraciones: {g.ratings?.["Valoraciones"] > 0 ? parseInt(g.ratings["Valoraciones"]) : "Sin valoraciones"}
-              </p>
-              <details className="mt-2">
-                <summary className="cursor-pointer text-blue-600">Ver servicios valorados</summary>
-                <div className="mt-2">
-                  {Object.entries(g.ratings || {}).map(([key, value]) => (
-                    key !== "Valoraciones" && key !== "Valoración Global" && (
-                      <p key={key} className="text-sm">{key}: {value?.toFixed(1)}</p>
-                    )
-                  ))}
+        {mostrarFiltros && (
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-2">Filtrar por servicios valorados (mínimo)</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {serviciosValorados.map(servicio => (
+                <div key={servicio}>
+                  <label className="block text-sm font-medium">{servicio}</label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="5"
+                    step="0.1"
+                    value={filtrosValoracion[servicio] || 0}
+                    onChange={(e) => setFiltrosValoracion(prev => ({ ...prev, [servicio]: parseFloat(e.target.value) }))}
+                    className="w-full"
+                  />
+                  <p className="text-sm text-gray-600">Desde {filtrosValoracion[servicio] || 0}</p>
                 </div>
-              </details>
+              ))}
             </div>
-          ))}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {gestorOrdenado.map((g, idx) => {
+            const valoraciones = g.ratings?.["Valoraciones"] || 0;
+            return (
+              <div key={idx} className="bg-white rounded-lg shadow-md p-4">
+                <img src={g.image} alt={g.name} className="w-full h-40 object-cover rounded" />
+                <h2 className="text-xl font-semibold mt-2">{g.name}</h2>
+                <p className="text-sm text-gray-500 flex items-center gap-1">
+                  <FaMapMarkerAlt /> {g.province}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Valoración Global: {g.ratingGlobal != null ? g.ratingGlobal.toFixed(1) : "Sin valoraciones"}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Valoraciones: {valoraciones > 0 ? parseInt(valoraciones) : "Sin valoraciones"}
+                </p>
+                <details className="mt-2">
+                  <summary className="cursor-pointer text-blue-600">Ver servicios valorados</summary>
+                  <div className="mt-2">
+                    {Object.entries(g.ratings || {}).map(([key, value]) => (
+                      key !== "Valoraciones" && key !== "Valoración Global" && (
+                        <p key={key} className="text-sm">{key}: {value?.toFixed(1)}</p>
+                      )
+                    ))}
+                  </div>
+                </details>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
