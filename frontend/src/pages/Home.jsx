@@ -52,11 +52,11 @@ const Home = () => {
 
   return (
     <div>
-      
+      <Navbar />
       <div className="p-6">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-blue-700">TaxRating</h1>
-          <p className="text-gray-600 text-lg">Valoración objetiva de gestorías y asesorías fiscales, realizada por antiguos empleados de la Agencia Tributaria</p>
+          <p className="text-gray-600 text-lg">Valoración objetiva de gestorías y asesorías fiscales, realizada por antiguos trabajadores de la Agencia Tributaria</p>
         </div>
         <div className="flex flex-wrap justify-between items-center gap-6 mb-6">
           <div className="flex-1 min-w-[200px]">
@@ -146,6 +146,18 @@ const Home = () => {
                     ))}
                   </div>
                 </details>
+                <div className="flex gap-4 mt-3">
+                  {g.website && (
+                    <a href={g.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 flex items-center gap-1">
+                      <FaGlobe /> Web
+                    </a>
+                  )}
+                  {g.location && (
+                    <a href={`https://www.google.com/maps?q=${encodeURIComponent(g.location)}`} target="_blank" rel="noopener noreferrer" className="text-red-500 flex items-center gap-1">
+                      <FaMapMarkerAlt /> Mapa
+                    </a>
+                  )}
+                </div>
               </div>
             );
           })}
