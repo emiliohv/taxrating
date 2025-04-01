@@ -52,7 +52,7 @@ const Home = () => {
 
   return (
     <div>
-      <Navbar />
+      
       <div className="p-6">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-blue-700">TaxRating</h1>
