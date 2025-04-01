@@ -97,18 +97,25 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 @app.get("/gestorias")
 async def get_all():
     try:
-        gestorias = list(collection.find())
+        gestorias = list(collection.find({}, {"nif": 0}))
         for g in gestorias:
             g["_id"] = str(g["_id"])
         return gestorias
     except Exception as e:
         print(f"❌ Error al obtener gestorías: {e}")
         raise HTTPException(status_code=500, detail="Error al obtener gestorías")
-
+"""
 @app.post("/gestorias")
 async def add_gestoria(gestoria: Gestoria):
     data = gestoria.dict()
     data["ratingGlobal"] = gestoria.ratings.get("Valoración Global", 0)
+    result = collection.insert_one(data)
+    return {"id": str(result.inserted_id)}
+"""
+@app.post("/gestorias")
+async def add_gestoria(gestoria: dict):
+    data = gestoria.copy()
+    data["ratingGlobal"] = gestoria.get("ratings", {}).get("Valoración Global", 0)
     result = collection.insert_one(data)
     return {"id": str(result.inserted_id)}
 
