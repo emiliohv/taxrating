@@ -16,15 +16,26 @@ const Formulario = () => {
   const [error, setError] = useState("");
 
   const validarNIF = (nif) => {
-    const nifRegex = /^[0-9]{8}[A-Z]$/;
-    if (!nifRegex.test(nif)) return false;
+    nif = nif.toUpperCase();
+    const dniRegex = /^[0-9]{8}[A-Z]$/;
+    const nieRegex = /^[XYZ][0-9]{7}[A-Z]$/;
+    const cifRegex = /^[ABCDEFGHJNPQRSUVW][0-9]{7}[0-9A-J]$/;
 
-    const letras = "TRWAGMYFPDXBNJZSQVHLCKE";
-    const numero = parseInt(nif.substring(0, 8), 10);
-    const letraCalculada = letras[numero % 23];
-    const letra = nif.charAt(8);
-
-    return letra === letraCalculada;
+    if (dniRegex.test(nif)) {
+      const letras = "TRWAGMYFPDXBNJZSQVHLCKE";
+      const numero = parseInt(nif.substring(0, 8), 10);
+      const letraCalculada = letras[numero % 23];
+      return nif.charAt(8) === letraCalculada;
+    } else if (nieRegex.test(nif)) {
+      const letras = "TRWAGMYFPDXBNJZSQVHLCKE";
+      const nie = nif.replace("X", "0").replace("Y", "1").replace("Z", "2");
+      const numero = parseInt(nie.substring(0, 8), 10);
+      const letraCalculada = letras[numero % 23];
+      return nif.charAt(8) === letraCalculada;
+    } else if (cifRegex.test(nif)) {
+      return true; // Valid basic format
+    }
+    return false;
   };
 
   const handleChange = (e) => {
@@ -38,7 +49,7 @@ const Formulario = () => {
       return;
     }
     if (!validarNIF(form.nif)) {
-      setError("NIF no válido. Debe tener 8 dígitos seguidos de una letra correcta.");
+      setError("NIF no válido. Verifica el formato de DNI, NIE o CIF.");
       return;
     }
     try {
