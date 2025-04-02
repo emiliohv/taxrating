@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const Formulario = () => {
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     name: "",
     image: "",
     website: "",
@@ -12,53 +12,84 @@ const Formulario = () => {
     nif: ""
   });
 
+  const [enviado, setEnviado] = useState(false);
+  const [error, setError] = useState("");
+
+  const validarNIF = (nif) => {
+    const nifRegex = /^[0-9]{8}[A-Z]$/;
+    if (!nifRegex.test(nif)) return false;
+
+    const letras = "TRWAGMYFPDXBNJZSQVHLCKE";
+    const numero = parseInt(nif.substring(0, 8), 10);
+    const letraCalculada = letras[numero % 23];
+    const letra = nif.charAt(8);
+
+    return letra === letraCalculada;
+  };
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!form.name || !form.province || !form.email || !form.nif) {
+      setError("Por favor, completa los campos obligatorios.");
+      return;
+    }
+    if (!validarNIF(form.nif)) {
+      setError("NIF no válido. Debe tener 8 dígitos seguidos de una letra correcta.");
+      return;
+    }
     try {
-      await axios.post("https://taxrating-backend.onrender.com/gestorias", formData);
-      alert("Gestoría añadida correctamente");
-    } catch (err) {
-      console.error("Error al enviar el formulario:", err);
-      alert("Error al enviar el formulario");
+      await axios.post("https://taxrating-backend.onrender.com/gestorias", form);
+      setEnviado(true);
+      setError("");
+    } catch {
+      setError("Error al enviar los datos.");
     }
   };
 
+  if (enviado) {
+    return <p className="text-center text-green-600 text-lg mt-6">Gestoría enviada con éxito.</p>;
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl mx-auto p-4 bg-white shadow rounded">
-      <h2 className="text-xl font-semibold mb-4">Añadir nueva gestoría</h2>
-      {["name", "image", "website", "location", "province", "email", "nif"].map((field) => (
-        <div key={field} className="mb-4">
-          <label className="block text-sm font-medium">
-            {field === "name" && "Nombre"}
-            {field === "image" && "URL de la imagen"}
-            {field === "website" && "Sitio web"}
-            {field === "location" && "Dirección"}
-            {field === "province" && "Provincia"}
-            {field === "email" && "Correo electrónico"}
-            {field === "nif" && "NIF (obligatorio)"}
-          </label>
-          <input
-            type={field === "email" ? "email" : "text"}
-            name={field}
-            required
-            value={formData[field]}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-2 py-1"
-          />
-        </div>
-      ))}
-      <button
-        type="submit"
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        Enviar
-      </button>
-    </form>
+    <div className="max-w-xl mx-auto mt-6 bg-white p-6 rounded shadow">
+      <h2 className="text-2xl font-bold mb-4 text-center">Registrar nueva gestoría</h2>
+      {error && <p className="text-red-600 text-sm mb-2 text-center">{error}</p>}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <label>
+          Nombre <span className="text-red-600">*</span>
+          <input type="text" name="name" value={form.name} onChange={handleChange} className="border p-2 rounded w-full" />
+        </label>
+        <label>
+          Imagen
+          <input type="text" name="image" value={form.image} onChange={handleChange} className="border p-2 rounded w-full" />
+        </label>
+        <label>
+          Página Web
+          <input type="text" name="website" value={form.website} onChange={handleChange} className="border p-2 rounded w-full" />
+        </label>
+        <label>
+          Ubicación (Google Maps)
+          <input type="text" name="location" value={form.location} onChange={handleChange} className="border p-2 rounded w-full" />
+        </label>
+        <label>
+          Provincia <span className="text-red-600">*</span>
+          <input type="text" name="province" value={form.province} onChange={handleChange} className="border p-2 rounded w-full" />
+        </label>
+        <label>
+          Email <span className="text-red-600">*</span>
+          <input type="email" name="email" value={form.email} onChange={handleChange} className="border p-2 rounded w-full" />
+        </label>
+        <label>
+          NIF <span className="text-red-600">*</span>
+          <input type="text" name="nif" value={form.nif} onChange={handleChange} className="border p-2 rounded w-full" />
+        </label>
+        <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Enviar</button>
+      </form>
+    </div>
   );
 };
 
