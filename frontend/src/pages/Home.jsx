@@ -128,10 +128,10 @@ const Home = () => {
                 <img src={g.image} alt={g.name} className="w-full h-40 object-cover rounded" />
                 <h2 className="text-xl font-semibold mt-2">{g.name}</h2>
                 <p className="text-sm text-gray-500 flex items-center gap-1">
-                  <FaMapMarkerAlt /> {g.province}
+                  Provincia: {g.province} 
                 </p>
                 <p className={`text-sm ${getColorClass(g.ratingGlobal)} font-semibold`}>
-                  Valoración Global: {g.ratingGlobal != null ? g.ratingGlobal.toFixed(1) : "Sin valoraciones"}
+                  Valoración Global: {g.ratingGlobal != null||0 ? g.ratingGlobal.toFixed(1) : "Sin valoraciones"}
                 </p>
                 <p className="text-sm text-gray-600">
                   Valoraciones: {valoraciones > 0 ? parseInt(valoraciones) : "Sin valoraciones"}
