@@ -1,126 +1,170 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Navbar from "../components/Navbar";
-import { FaGlobe, FaMapMarkerAlt } from "react-icons/fa";
-import "../index.css";
 
 const Admin = () => {
-  const [credentials, setCredentials] = useState({ username: "", password: "" });
-  const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [gestorias, setGestorias] = useState([]);
-  const [error, setError] = useState("");
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [provinciaFiltro, setProvinciaFiltro] = useState("");
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
+  const [orden, setOrden] = useState("");
+  const [servicios, setServicios] = useState([]);
+  const [valoresMinimos, setValoresMinimos] = useState({});
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const params = new URLSearchParams();
-      params.append("username", credentials.username);
-      params.append("password", credentials.password);
+  useEffect(() => {
+    fetchGestorias();
+  }, []);
 
-      const res = await axios.post("https://taxrating-backend.onrender.com/token", params);
-      localStorage.setItem("token", res.data.access_token);
-      setToken(res.data.access_token);
-      setError("");
-    } catch (err) {
-      setError("Credenciales incorrectas");
-    }
-  };
+  useEffect(() => {
+    const todasProvincias = [...new Set(gestorias.map((g) => g.province))];
+    const todosServicios = new Set();
+    gestorias.forEach((g) => {
+      Object.keys(g.ratings || {}).forEach((s) => todosServicios.add(s));
+    });
+    setServicios([...todosServicios]);
+  }, [gestorias]);
 
   const fetchGestorias = async () => {
     try {
-      const res = await axios.get("https://taxrating-backend.onrender.com/gestorias");
-      setGestorias(res.data);
-    } catch (err) {
-      console.error("Error al cargar gestorías", err);
+      const response = await axios.get("https://taxrating-backend.onrender.com/gestorias");
+      setGestorias(response.data);
+    } catch (error) {
+      console.error("Error al obtener gestorías", error);
     }
   };
 
-  const deleteGestoria = async (id) => {
+  const eliminarGestoria = async (id) => {
     try {
       await axios.delete(`https://taxrating-backend.onrender.com/gestorias/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setGestorias(gestorias.filter((g) => g._id?.$oid !== id && g._id !== id));
-    } catch (err) {
-      console.error("Error al eliminar gestoría", err);
-      if (err.response && err.response.status === 401) {
-        setError("Sesión expirada. Vuelve a iniciar sesión.");
-        localStorage.removeItem("token");
-        setToken("");
-      }
+      fetchGestorias();
+    } catch (error) {
+      console.error("Error al eliminar gestoría", error);
     }
   };
 
-  useEffect(() => {
-    if (token) fetchGestorias();
-  }, [token]);
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setToken("");
+  };
 
-  if (!token) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-        
-        <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow-md w-80">
-          <h2 className="text-xl font-bold mb-4">Iniciar sesión como administrador</h2>
-          {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
-          <input
-            type="text"
-            placeholder="Usuario"
-            value={credentials.username}
-            onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-            className="w-full p-2 border border-gray-300 rounded mb-3"
-            required
-          />
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={credentials.password}
-            onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-            className="w-full p-2 border border-gray-300 rounded mb-4"
-            required
-          />
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-          >
-            Iniciar sesión
-          </button>
-        </form>
-      </div>
-    );
-  }
+  const gestorFiltrado = gestorias
+    .filter((g) => !provinciaFiltro || g.province === provinciaFiltro)
+    .filter((g) =>
+      Object.entries(valoresMinimos).every(
+        ([servicio, valor]) => (g.ratings?.[servicio] || 0) >= valor
+      )
+    )
+    .sort((a, b) => {
+      if (orden === "alfabetico-asc") return a.name.localeCompare(b.name);
+      if (orden === "alfabetico-desc") return b.name.localeCompare(a.name);
+      if (orden === "valoracion-asc") return a.ratingGlobal - b.ratingGlobal;
+      if (orden === "valoracion-desc") return b.ratingGlobal - a.ratingGlobal;
+      return 0;
+    });
 
   return (
-    <>
-      
-      <div className="p-6">
-        <h2 className="text-3xl font-bold mb-6 text-center">Panel de Administrador</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {gestorias.map((g, idx) => (
-            <div key={idx} className="bg-white rounded-lg shadow-md p-4 relative">
-              <img src={g.image} alt={g.name} className="w-full h-40 object-cover rounded" />
-              <h2 className="text-xl font-semibold mt-2">{g.name}</h2>
-              <p className="text-sm text-gray-500">{g.province}</p>
-              {g.website && (
-                <a href={g.website} className="text-blue-500 block mt-1 flex items-center gap-1" target="_blank" rel="noreferrer">
-                  <FaGlobe className="inline" /> <span className="underline">Ir a la web</span>
-                </a>
-              )}
-              {g.location && (
-                <a href={g.location} className="text-blue-500 block mt-1 flex items-center gap-1" target="_blank" rel="noreferrer">
-                  <FaMapMarkerAlt className="inline" /> <span className="underline">Ver ubicación</span>
-                </a>
-              )}
-              <button
-                onClick={() => deleteGestoria(g._id?.$oid || g._id)}
-                className="absolute top-2 right-2 text-red-600 hover:text-red-800"
-              >
-                ✕
-              </button>
+    <div className="p-4 max-w-6xl mx-auto">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-3xl font-bold">Panel del Administrador</h1>
+        {token && (
+          <button
+            className="bg-red-600 text-white px-4 py-2 rounded"
+            onClick={handleLogout}
+          >
+            Cerrar sesión
+          </button>
+        )}
+      </div>
+      <div className="flex flex-wrap gap-4 justify-between items-center bg-gray-100 p-4 rounded mb-4">
+        <div>
+          <label className="block text-sm font-semibold mb-1">Provincia</label>
+          <select
+            value={provinciaFiltro}
+            onChange={(e) => setProvinciaFiltro(e.target.value)}
+            className="border p-2 rounded"
+          >
+            <option value="">Todas</option>
+            {[...new Set(gestorias.map((g) => g.province))].map((prov) => (
+              <option key={prov} value={prov}>{prov}</option>
+            ))}
+          </select>
+        </div>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+          onClick={() => setMostrarFiltros(!mostrarFiltros)}
+        >
+          {mostrarFiltros ? "Ocultar filtros" : "Mostrar filtros"}
+        </button>
+        <div>
+          <label className="block text-sm font-semibold mb-1">Ordenar por</label>
+          <select
+            value={orden}
+            onChange={(e) => setOrden(e.target.value)}
+            className="border p-2 rounded"
+          >
+            <option value="">Ninguno</option>
+            <option value="alfabetico-asc">Alfabético (A-Z)</option>
+            <option value="alfabetico-desc">Alfabético (Z-A)</option>
+            <option value="valoracion-asc">Valoración (menor a mayor)</option>
+            <option value="valoracion-desc">Valoración (mayor a menor)</option>
+          </select>
+        </div>
+      </div>
+
+      {mostrarFiltros && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+          {servicios.map((servicio) => (
+            <div key={servicio}>
+              <label className="block text-sm font-semibold mb-1">
+                {servicio.replace(/_/g, " ")} mínima
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="10"
+                value={valoresMinimos[servicio] || 0}
+                onChange={(e) =>
+                  setValoresMinimos({
+                    ...valoresMinimos,
+                    [servicio]: Number(e.target.value),
+                  })
+                }
+              />
+              <span className="text-sm ml-2">{valoresMinimos[servicio] || 0}</span>
             </div>
           ))}
         </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {gestorFiltrado.map((g) => (
+          <div key={g._id} className="border rounded p-4 relative bg-white shadow">
+            <button
+              className="absolute top-2 right-2 text-red-500 font-bold text-xl"
+              onClick={() => eliminarGestoria(g._id)}
+            >
+              ×
+            </button>
+            <h3 className="text-lg font-bold mb-1">{g.name}</h3>
+            <p className="text-sm text-gray-700 mb-1">Provincia: {g.province}</p>
+            <p className="text-sm text-gray-700 mb-2">Valoración Global: {g.ratingGlobal || "Sin valoración"}</p>
+            {g.ratings && (
+              <details>
+                <summary className="cursor-pointer text-sm text-blue-600">Ver valoraciones</summary>
+                <ul className="text-sm mt-1">
+                  {Object.entries(g.ratings).map(([serv, val]) => (
+                    <li key={serv}>
+                      {serv.replace(/_/g, " ")}: {val.toFixed(1)}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
+          </div>
+        ))}
       </div>
-    </>
+    </div>
   );
 };
 
