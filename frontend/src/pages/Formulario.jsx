@@ -72,8 +72,20 @@ const Formulario = () => {
       {error && <p className="text-red-600 text-sm mb-2 text-center">{error}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <label>
+          NIF <span className="text-red-600">*</span>
+          <input type="text" name="nif" value={form.nif} onChange={handleChange} className="border p-2 rounded w-full" />
+        </label>
+        <label>
           Nombre <span className="text-red-600">*</span>
           <input type="text" name="name" value={form.name} onChange={handleChange} className="border p-2 rounded w-full" />
+        </label>
+        <label>
+          Provincia <span className="text-red-600">*</span>
+          <input type="text" name="province" value={form.province} onChange={handleChange} className="border p-2 rounded w-full" />
+        </label>
+        <label>
+          Email <span className="text-red-600">*</span>
+          <input type="email" name="email" value={form.email} onChange={handleChange} className="border p-2 rounded w-full" />
         </label>
         <label>
           Imagen
@@ -86,19 +98,7 @@ const Formulario = () => {
         <label>
           Ubicación (Google Maps)
           <input type="text" name="location" value={form.location} onChange={handleChange} className="border p-2 rounded w-full" />
-        </label>
-        <label>
-          Provincia <span className="text-red-600">*</span>
-          <input type="text" name="province" value={form.province} onChange={handleChange} className="border p-2 rounded w-full" />
-        </label>
-        <label>
-          Email <span className="text-red-600">*</span>
-          <input type="email" name="email" value={form.email} onChange={handleChange} className="border p-2 rounded w-full" />
-        </label>
-        <label>
-          NIF <span className="text-red-600">*</span>
-          <input type="text" name="nif" value={form.nif} onChange={handleChange} className="border p-2 rounded w-full" />
-        </label>
+        </label>    
         <label>
           Código Recomendación/Promoción 
           <input type="text" name="promocode" value={form.promocode} onChange={handleChange} className="border p-2 rounded w-full" />
