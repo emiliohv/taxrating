@@ -23,23 +23,23 @@ client = MongoClient(os.getenv("MONGODB_URL"))
 db = client["taxrating"]
 collection = db["gestorias"]
 
-SECRET_KEY = "supersecretkey"
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
+
+ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-fake_admin = {
-    "username": "admin",
-    "hashed_password": pwd_context.hash("admin123"),
-}
+hashed_admin_password = pwd_context.hash(ADMIN_PASSWORD)
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
 def authenticate_user(username: str, password: str):
-    if username != fake_admin["username"] or not verify_password(password, fake_admin["hashed_password"]):
+    if username != ADMIN_USERNAME or not verify_password(password, hashed_admin_password):
         return False
     return True
 
@@ -53,7 +53,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")
-        if username != fake_admin["username"]:
+        if username != ADMIN_USERNAME:
             raise HTTPException(status_code=401, detail="Token inválido")
         return {"username": username}
     except JWTError:
@@ -97,4 +97,3 @@ async def delete_gestoria(id: str, current_user: dict = Depends(get_current_user
     if result.deleted_count == 1:
         return {"message": "Gestoría eliminada correctamente"}
     raise HTTPException(status_code=404, detail="Gestoría no encontrada")
-
