@@ -68,7 +68,7 @@ const Formulario = () => {
 
   return (
     <div className="max-w-xl mx-auto mt-6 bg-white p-6 rounded shadow">
-      <h2 className="text-2xl font-bold mb-4 text-center">Registrar nueva gestoría</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">Alta nueva asesoría</h2>
       {error && <p className="text-red-600 text-sm mb-2 text-center">{error}</p>}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <label>

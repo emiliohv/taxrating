@@ -104,14 +104,7 @@ async def get_all():
     except Exception as e:
         print(f"❌ Error al obtener gestorías: {e}")
         raise HTTPException(status_code=500, detail="Error al obtener gestorías")
-"""
-@app.post("/gestorias")
-async def add_gestoria(gestoria: Gestoria):
-    data = gestoria.dict()
-    data["ratingGlobal"] = gestoria.ratings.get("Valoración Global", 0)
-    result = collection.insert_one(data)
-    return {"id": str(result.inserted_id)}
-"""
+
 @app.post("/gestorias")
 async def add_gestoria(gestoria: dict):
     data = gestoria.copy()
