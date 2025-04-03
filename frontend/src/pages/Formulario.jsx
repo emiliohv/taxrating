@@ -81,8 +81,27 @@ const Formulario = () => {
         </label>
         <label>
           Provincia <span className="text-red-600">*</span>
-          <input type="text" name="province" value={form.province} onChange={handleChange} className="border p-2 rounded w-full" />
+          <select
+            name="province"
+            value={form.province}
+            onChange={handleChange}
+            className="border p-2 rounded w-full"
+            required
+          >
+            <option value="">Selecciona una provincia</option>
+            {[
+              "Álava", "Albacete", "Alicante", "Almería", "Asturias", "Ávila", "Badajoz", "Barcelona", "Burgos",
+              "Cáceres", "Cádiz", "Cantabria", "Castellón", "Ciudad Real", "Córdoba", "Cuenca", "Girona", "Granada",
+              "Guadalajara", "Guipúzcoa", "Huelva", "Huesca", "Illes Balears", "Jaén", "La Coruña", "La Rioja", "Las Palmas",
+              "León", "Lleida", "Lugo", "Madrid", "Málaga", "Murcia", "Navarra", "Ourense", "Palencia", "Pontevedra",
+              "Salamanca", "Santa Cruz de Tenerife", "Segovia", "Sevilla", "Soria", "Tarragona", "Teruel", "Toledo",
+              "Valencia", "Valladolid", "Vizcaya", "Zamora", "Zaragoza", "Ceuta", "Melilla"
+            ].map((provincia) => (
+              <option key={provincia} value={provincia}>{provincia}</option>
+            ))}
+          </select>
         </label>
+
         <label>
           Email <span className="text-red-600">*</span>
           <input type="email" name="email" value={form.email} onChange={handleChange} className="border p-2 rounded w-full" />
