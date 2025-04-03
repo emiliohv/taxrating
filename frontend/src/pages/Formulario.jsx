@@ -9,7 +9,8 @@ const Formulario = () => {
     location: "",
     province: "",
     email: "",
-    nif: ""
+    nif: "",
+    promocode: ""
   });
 
   const [enviado, setEnviado] = useState(false);
@@ -97,6 +98,10 @@ const Formulario = () => {
         <label>
           NIF <span className="text-red-600">*</span>
           <input type="text" name="nif" value={form.nif} onChange={handleChange} className="border p-2 rounded w-full" />
+        </label>
+        <label>
+          Código Recomendación/Promoción
+          <input type="text" name="promocode" value={form.promocode} onChange={handleChange} className="border p-2 rounded w-full" />
         </label>
         <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Enviar</button>
       </form>
