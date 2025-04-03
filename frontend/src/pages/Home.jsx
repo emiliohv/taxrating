@@ -131,7 +131,7 @@ const Home = () => {
                   Provincia: {g.province} 
                 </p>
                 <p className={`text-sm ${getColorClass(g.ratingGlobal)} font-semibold`}>
-                  Valoración Global: {g.ratingGlobal != null||0 ? g.ratingGlobal.toFixed(1) : "Sin valoraciones"}
+                  Valoración Global: {g.ratingGlobal != 0 ? g.ratingGlobal.toFixed(1) : "Sin valoraciones"}
                 </p>
                 <p className="text-sm text-gray-600">
                   Valoraciones: {valoraciones > 0 ? parseInt(valoraciones) : "Sin valoraciones"}
