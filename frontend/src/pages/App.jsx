@@ -10,7 +10,7 @@ import AdminLogin from "./AdminLogin";
 
 function App() {
   return (
-    <Router>
+    <Router basename="/">
       <Navbar/>
       <Routes>
         <Route path="/" element={<Home />} />
