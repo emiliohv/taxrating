@@ -4,21 +4,21 @@ import Home from "./Home";
 import Admin from "./Admin";
 import Formulario from "./Formulario";
 import AdminLogin from "./AdminLogin";
-import Navbar from "../components/Navbar";
+import Navbar from "./components/Navbar";
 
-function App() {
+const App = () => {
   return (
     <Router>
-      <Routes>
       <Navbar/>
+      <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/formulario" element={<Formulario />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/formulario" element={<Formulario />} />
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;
 
