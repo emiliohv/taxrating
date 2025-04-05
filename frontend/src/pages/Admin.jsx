@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+iimport React, { useEffect, useState } from "react";
 import axios from "axios";
 
 const Admin = () => {
@@ -37,6 +37,9 @@ const Admin = () => {
       await axios.delete(`https://taxrating-backend.onrender.com/gestorias/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      await axios.post("https://hook.eu2.make.com/w68s5yb2z0o7is43nx4irydynkq37bl7", {
+        id
+      });
       fetchGestorias();
     } catch (error) {
       console.error("Error al eliminar gestoría", error);
@@ -46,6 +49,7 @@ const Admin = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     setToken("");
+    window.location.reload();
   };
 
   const gestorFiltrado = gestorias
@@ -117,7 +121,7 @@ const Admin = () => {
           {servicios.map((servicio) => (
             <div key={servicio}>
               <label className="block text-sm font-semibold mb-1">
-                {servicio.replace(/_/g, " ")} 
+                {servicio.replace(/_/g, " ")} mínima
               </label>
               <input
                 type="range"
