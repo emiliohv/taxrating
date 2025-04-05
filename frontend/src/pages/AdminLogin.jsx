@@ -10,17 +10,20 @@ const AdminLogin = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    const formData = new URLSearchParams();
+    formData.append("username", username);
+    formData.append("password", password);
+
     try {
-        const formData = new URLSearchParams();
-        formData.append("username", username);
-        formData.append("password", password);
-        
-        const response = await axios.post("https://taxrating-backend.onrender.com/token", formData, {
+      const response = await axios.post(
+        "https://taxrating-backend.onrender.com/token",
+        formData,
+        {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },
-        });
-        
+        }
+      );
       localStorage.setItem("token", response.data.access_token);
       navigate("/admin");
     } catch {
