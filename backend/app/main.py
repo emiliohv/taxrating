@@ -83,13 +83,43 @@ async def get_all():
     for g in gestorias:
         g["_id"] = str(g["_id"])
     return gestorias
-
+"""
 @app.post("/gestorias")
 async def add_gestoria(gestoria: Gestoria):
     data = gestoria.dict()
     data["ratingGlobal"] = gestoria.ratings.get("Valoración Global", 0)
     result = collection.insert_one(data)
     return {"id": str(result.inserted_id)}
+"""
+import requests
+
+@app.post("/gestorias")
+async def add_gestoria(gestoria: Gestoria):
+    data = gestoria.dict()
+    data["ratingGlobal"] = gestoria.ratings.get("Valoración Global", 0)
+    result = collection.insert_one(data)
+
+    gestor_id = str(result.inserted_id)
+    codigo_promo = gestor_id[-6:]
+
+    try:
+        response = requests.post(
+            "https://hook.eu2.make.com/w68s5yb2z0o7is43nx4irydynkq37bl7",
+            json={
+                "nombre": data.get("name", ""),
+                "email": data.get("email", ""),
+                "codigo": codigo_promo,
+                "provincia": data.get("province", "")
+            },
+            timeout=10
+        )
+        print(f"Webhook status: {response.status_code}")
+        print(response.text)
+    except Exception as e:
+        print(f"Error notificando a Make: {e}")
+
+    return {"id": gestor_id}
+
 
 @app.delete("/gestorias/{id}")
 async def delete_gestoria(id: str, current_user: dict = Depends(get_current_user)):
