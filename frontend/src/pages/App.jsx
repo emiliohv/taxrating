@@ -11,6 +11,7 @@ import AdminLogin from "./AdminLogin";
 function App() {
   return (
     <Router>
+      <div>
       <Navbar/>
       <Routes>
         <Route path="/" element={<Home />} />
@@ -18,6 +19,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/admin-login" element={<AdminLogin />} />
       </Routes>
+      </div>
     </Router>
   );
 }
