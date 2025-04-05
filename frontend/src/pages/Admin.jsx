@@ -11,8 +11,15 @@ const Admin = () => {
   const [valoresMinimos, setValoresMinimos] = useState({});
 
   useEffect(() => {
-    fetchGestorias();
-  }, []);
+    if (!token) {
+      const stored = localStorage.getItem("token");
+      if (!stored) {
+        window.location.href = "/admin-login";
+      }
+    } else {
+      fetchGestorias();
+    }
+  }, [token]);
 
   useEffect(() => {
     const todasProvincias = [...new Set(gestorias.map((g) => g.province))];
@@ -84,7 +91,6 @@ const Admin = () => {
           </button>
         )}
       </div>
-
       <div className="flex flex-wrap gap-4 justify-between items-center bg-gray-100 p-4 rounded mb-4">
         <div>
           <label className="block text-sm font-semibold mb-1">Provincia</label>
@@ -99,14 +105,12 @@ const Admin = () => {
             ))}
           </select>
         </div>
-
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded"
           onClick={() => setMostrarFiltros(!mostrarFiltros)}
         >
           {mostrarFiltros ? "Ocultar filtros" : "Mostrar filtros"}
         </button>
-
         <div>
           <label className="block text-sm font-semibold mb-1">Ordenar por</label>
           <select
@@ -128,7 +132,7 @@ const Admin = () => {
           {servicios.map((servicio) => (
             <div key={servicio}>
               <label className="block text-sm font-semibold mb-1">
-                {servicio.replace(/_/g, " ")} 
+                {servicio.replace(/_/g, " ")} mínima
               </label>
               <input
                 type="range"
