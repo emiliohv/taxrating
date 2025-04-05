@@ -8,6 +8,7 @@ from bson import ObjectId
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 import os
+import requests
 
 app = FastAPI()
 
@@ -91,7 +92,7 @@ async def add_gestoria(gestoria: Gestoria):
     result = collection.insert_one(data)
     return {"id": str(result.inserted_id)}
 """
-import requests
+
 
 @app.post("/gestorias")
 async def add_gestoria(gestoria: Gestoria):
