@@ -32,14 +32,18 @@ const Admin = () => {
     }
   };
 
-  const eliminarGestoria = async (id) => {
+  const eliminarGestoria = async (id, name, email) => {
     try {
       await axios.delete(`https://taxrating-backend.onrender.com/gestorias/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       await axios.post("https://hook.eu2.make.com/w68s5yb2z0o7is43nx4irydynkq37bl7", {
-        id
+        tipo: "eliminacion",
+        nombre: name,
+        email: email,
       });
+
       fetchGestorias();
     } catch (error) {
       console.error("Error al eliminar gestoría", error);
@@ -80,6 +84,7 @@ const Admin = () => {
           </button>
         )}
       </div>
+
       <div className="flex flex-wrap gap-4 justify-between items-center bg-gray-100 p-4 rounded mb-4">
         <div>
           <label className="block text-sm font-semibold mb-1">Provincia</label>
@@ -94,12 +99,14 @@ const Admin = () => {
             ))}
           </select>
         </div>
+
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded"
           onClick={() => setMostrarFiltros(!mostrarFiltros)}
         >
           {mostrarFiltros ? "Ocultar filtros" : "Mostrar filtros"}
         </button>
+
         <div>
           <label className="block text-sm font-semibold mb-1">Ordenar por</label>
           <select
@@ -146,13 +153,15 @@ const Admin = () => {
           <div key={g._id} className="border rounded p-4 relative bg-white shadow">
             <button
               className="absolute top-2 right-2 text-red-500 font-bold text-xl"
-              onClick={() => eliminarGestoria(g._id)}
+              onClick={() => eliminarGestoria(g._id, g.name, g.email)}
             >
               ×
             </button>
             <h3 className="text-lg font-bold mb-1">{g.name}</h3>
             <p className="text-sm text-gray-700 mb-1">Provincia: {g.province}</p>
-            <p className="text-sm text-gray-700 mb-2">Valoración Global: {g.ratingGlobal || "Sin valoración"}</p>
+            <p className="text-sm text-gray-700 mb-2">
+              Valoración Global: {g.ratingGlobal || "Sin valoración"}
+            </p>
             {g.ratings && (
               <details>
                 <summary className="cursor-pointer text-sm text-blue-600">Ver valoraciones</summary>
