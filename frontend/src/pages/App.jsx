@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./Home";
 import Admin from "./Admin";
 import Formulario from "./Formulario";
-import AdminLogin from "./AdminLogin";
+import AdminLogin from "./Adminlogin";
 
 function App() {
   return (
