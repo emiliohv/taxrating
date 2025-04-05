@@ -8,7 +8,6 @@ import AdminLogin from "./pages/AdminLogin";
 const App = () => {
   return (
     <Router>
-      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/formulario" element={<Formulario />} />
@@ -20,4 +19,5 @@ const App = () => {
 };
 
 export default App;
+
 
