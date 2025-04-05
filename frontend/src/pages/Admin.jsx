@@ -2,23 +2,34 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 const Admin = () => {
-  const [gestorias, setGestorias] = useState([]);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [gestorias, setGestorias] = useState([]);
   const [provinciaFiltro, setProvinciaFiltro] = useState("");
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [orden, setOrden] = useState("");
   const [servicios, setServicios] = useState([]);
   const [valoresMinimos, setValoresMinimos] = useState({});
 
-  useEffect(() => {
-    if (!token) {
-      const stored = localStorage.getItem("token");
-      if (!stored) {
-        window.location.href = "/admin-login";
-      }
-    } else {
-      fetchGestorias();
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("https://taxrating-backend.onrender.com/token", {
+        username,
+        password,
+      });
+      localStorage.setItem("token", response.data.access_token);
+      setToken(response.data.access_token);
+      setError("");
+    } catch {
+      setError("Credenciales incorrectas");
     }
+  };
+
+  useEffect(() => {
+    if (token) fetchGestorias();
   }, [token]);
 
   useEffect(() => {
@@ -60,7 +71,6 @@ const Admin = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     setToken("");
-    window.location.reload();
   };
 
   const gestorFiltrado = gestorias
@@ -78,19 +88,44 @@ const Admin = () => {
       return 0;
     });
 
+  if (!token) {
+    return (
+      <div className="max-w-sm mx-auto mt-10 p-6 bg-white shadow rounded">
+        <h2 className="text-2xl font-bold mb-4 text-center">Login Administrador</h2>
+        {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
+        <form onSubmit={handleLogin} className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Usuario"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="border p-2 rounded"
+          />
+          <input
+            type="password"
+            placeholder="Contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border p-2 rounded"
+          />
+          <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+            Iniciar sesión
+          </button>
+        </form>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">Panel del Administrador</h1>
-        {token && (
-          <button
-            className="bg-red-600 text-white px-4 py-2 rounded"
-            onClick={handleLogout}
-          >
-            Cerrar sesión
-          </button>
-        )}
+        <button className="bg-red-600 text-white px-4 py-2 rounded" onClick={handleLogout}>
+          Cerrar sesión
+        </button>
       </div>
+
+      {/* Filtros */}
       <div className="flex flex-wrap gap-4 justify-between items-center bg-gray-100 p-4 rounded mb-4">
         <div>
           <label className="block text-sm font-semibold mb-1">Provincia</label>
@@ -127,12 +162,13 @@ const Admin = () => {
         </div>
       </div>
 
+      {/* Filtros adicionales */}
       {mostrarFiltros && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           {servicios.map((servicio) => (
             <div key={servicio}>
               <label className="block text-sm font-semibold mb-1">
-                {servicio.replace(/_/g, " ")} 
+                {servicio.replace(/_/g, " ")} mínima
               </label>
               <input
                 type="range"
@@ -152,6 +188,7 @@ const Admin = () => {
         </div>
       )}
 
+      {/* Lista de gestorías */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {gestorFiltrado.map((g) => (
           <div key={g._id} className="border rounded p-4 relative bg-white shadow">
