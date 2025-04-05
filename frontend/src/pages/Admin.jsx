@@ -132,7 +132,7 @@ const Admin = () => {
           {servicios.map((servicio) => (
             <div key={servicio}>
               <label className="block text-sm font-semibold mb-1">
-                {servicio.replace(/_/g, " ")} mínima
+                {servicio.replace(/_/g, " ")} 
               </label>
               <input
                 type="range"
