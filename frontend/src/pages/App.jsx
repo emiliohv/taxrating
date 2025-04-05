@@ -8,7 +8,7 @@ import Admin from "./Admin";
 import Formulario from "./Formulario";
 import AdminLogin from "./AdminLogin";
 
-function App() {
+const App = () => {
   return (
     <Router>
       <div>
