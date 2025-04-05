@@ -4,6 +4,7 @@ import Home from "./Home";
 import Admin from "./Admin";
 import Formulario from "./Formulario";
 import AdminLogin from "./AdminLogin";
+import Navbar from "../components/Navbar";
 
 const App = () => {
   return (
