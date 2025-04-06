@@ -78,6 +78,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     access_token = create_access_token(data={"sub": form_data.username})
     return {"access_token": access_token, "token_type": "bearer"}
 
+
 @app.get("/gestorias")
 async def get_all():
     gestorias = list(collection.find({}, {"nif": 0, "promocode": 0}))
