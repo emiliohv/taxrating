@@ -10,19 +10,14 @@ const AdminLogin = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const formData = new URLSearchParams();
-    formData.append("username", username);
-    formData.append("password", password);
-
-    try {const params = new URLSearchParams();
-        params.append("username", username);
-        params.append("password", password);
-        
-        const response = await axios.post(
-          "https://taxrating-backend.onrender.com/token",
-          params,
-          { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-        );} catch {
+    try {
+      const response = await axios.post("https://taxrating-backend.onrender.com/token", {
+        username,
+        password,
+      });
+      localStorage.setItem("token", response.data.access_token);
+      navigate("/admin");
+    } catch {
       setError("Credenciales incorrectas");
     }
   };
