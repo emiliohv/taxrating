@@ -12,14 +12,18 @@ import requests
 
 app = FastAPI()
 
+origins = [
+    "http://localhost:5173",
+    "https://taxrating.vercel.app",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://taxrating.vercel.app"],
+    allow_origins=origins,  # También puedes usar ["*"] para permitir todos en desarrollo
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 client = MongoClient(os.getenv("MONGODB_URL"))
 db = client["taxrating"]
 collection = db["gestorias"]
