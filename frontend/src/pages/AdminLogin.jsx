@@ -10,28 +10,27 @@ const AdminLogin = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const formData = new URLSearchParams();
-    formData.append("username", username);
-    formData.append("password", password);
-    console.log("Token enviado:", token);
-    console.log("Headers:", {
-    Authorization: `Bearer ${token}`,
-    });
-    
-    try {      
-
-      const response = await axios.post("https://taxrating-backend.onrender.com/token", formData, {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      });
+    try {
+      const params = new URLSearchParams();
+      params.append("username", username);
+      params.append("password", password);
+  
+      const response = await axios.post(
+        "https://taxrating-backend.onrender.com/token",
+        params,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
       localStorage.setItem("token", response.data.access_token);
       navigate("/admin");
     } catch {
       setError("Credenciales incorrectas");
     }
   };
-
+  
   return (
     <div className="max-w-sm mx-auto mt-10 p-6 bg-white shadow rounded">
       <h2 className="text-2xl font-bold mb-4 text-center">Login Administrador</h2>
