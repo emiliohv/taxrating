@@ -15,6 +15,11 @@ const AdminLogin = () => {
     formData.append("password", password);
   
     try {
+      console.log("Token enviado:", token);
+      console.log("Headers:", {
+      Authorization: `Bearer ${token}`,
+      });
+
       const response = await axios.post("https://taxrating-backend.onrender.com/token", formData, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
