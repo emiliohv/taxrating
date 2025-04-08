@@ -13,12 +13,12 @@ const AdminLogin = () => {
     const formData = new URLSearchParams();
     formData.append("username", username);
     formData.append("password", password);
-  
-    try {
-      console.log("Token enviado:", token);
-      console.log("Headers:", {
-      Authorization: `Bearer ${token}`,
-      });
+    console.log("Token enviado:", token);
+    console.log("Headers:", {
+    Authorization: `Bearer ${token}`,
+    });
+    
+    try {      
 
       const response = await axios.post("https://taxrating-backend.onrender.com/token", formData, {
         headers: {
