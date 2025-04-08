@@ -10,27 +10,21 @@ const AdminLogin = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    console.log("Intentando iniciar sesión con:", username, password); // <-- AÑADE ESTO
     try {
-      const params = new URLSearchParams();
-      params.append("username", username);
-      params.append("password", password);
-      console.log(username, password)
-  
-      const response = await axios.post(
-        "https://taxrating-backend.onrender.com/token",
-        params,
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
-      );
+      const response = await axios.post("https://taxrating-backend.onrender.com/token", {
+        username,
+        password,
+      });
+      console.log("Respuesta del backend:", response); // <-- Y ESTO
       localStorage.setItem("token", response.data.access_token);
       navigate("/admin");
-    } catch {
+    } catch (error) {
+      console.error("Error al hacer login:", error); // <-- Y ESTO TAMBIÉN
       setError("Credenciales incorrectas");
     }
   };
+  
   
   return (
     <div className="max-w-sm mx-auto mt-10 p-6 bg-white shadow rounded">
