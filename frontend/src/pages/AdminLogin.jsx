@@ -14,6 +14,7 @@ const AdminLogin = () => {
       const params = new URLSearchParams();
       params.append("username", username);
       params.append("password", password);
+      console.log(username, password)
   
       const response = await axios.post(
         "https://taxrating-backend.onrender.com/token",
