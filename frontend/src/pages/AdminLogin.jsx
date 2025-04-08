@@ -46,6 +46,7 @@ const AdminLogin = () => {
         <input
           type="password"
           placeholder="Contraseña"
+          autoComplete="current-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="border p-2 rounded"
