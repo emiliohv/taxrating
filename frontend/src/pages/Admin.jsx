@@ -5,35 +5,14 @@ const Admin = () => {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorLogin, setErrorLogin] = useState("");
+  const [error, setError] = useState("");
+
   const [gestorias, setGestorias] = useState([]);
   const [provinciaFiltro, setProvinciaFiltro] = useState("");
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
   const [orden, setOrden] = useState("");
   const [servicios, setServicios] = useState([]);
   const [valoresMinimos, setValoresMinimos] = useState({});
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post("https://taxrating-backend.onrender.com/token", {
-        username,
-        password,
-      });
-      localStorage.setItem("token", res.data.access_token);
-      setToken(res.data.access_token);
-      setErrorLogin("");
-    } catch {
-      setErrorLogin("Credenciales incorrectas");
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setToken("");
-    setUsername("");
-    setPassword("");
-  };
 
   useEffect(() => {
     if (token) fetchGestorias();
@@ -48,10 +27,25 @@ const Admin = () => {
     setServicios([...todosServicios]);
   }, [gestorias]);
 
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post("https://taxrating-backend.onrender.com/token", {
+        username,
+        password,
+      });
+      localStorage.setItem("token", response.data.access_token);
+      setToken(response.data.access_token);
+      setError("");
+    } catch {
+      setError("Credenciales incorrectas");
+    }
+  };
+
   const fetchGestorias = async () => {
     try {
-      const res = await axios.get("https://taxrating-backend.onrender.com/gestorias");
-      setGestorias(res.data);
+      const response = await axios.get("https://taxrating-backend.onrender.com/gestorias");
+      setGestorias(response.data);
     } catch (error) {
       console.error("Error al obtener gestorías", error);
     }
@@ -62,15 +56,22 @@ const Admin = () => {
       await axios.delete(`https://taxrating-backend.onrender.com/gestorias/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       await axios.post("https://hook.eu2.make.com/w68s5yb2z0o7is43nx4irydynkq37bl7", {
         tipo: "eliminacion",
         nombre: name,
         email: email,
       });
+
       fetchGestorias();
     } catch (error) {
       console.error("Error al eliminar gestoría", error);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setToken("");
   };
 
   const gestorFiltrado = gestorias
@@ -92,7 +93,7 @@ const Admin = () => {
     return (
       <div className="max-w-sm mx-auto mt-10 p-6 bg-white shadow rounded">
         <h2 className="text-2xl font-bold mb-4 text-center">Login Administrador</h2>
-        {errorLogin && <p className="text-red-600 mb-4 text-center">{errorLogin}</p>}
+        {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
           <input
             type="text"
@@ -120,7 +121,10 @@ const Admin = () => {
     <div className="p-4 max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">Panel del Administrador</h1>
-        <button className="bg-red-600 text-white px-4 py-2 rounded" onClick={handleLogout}>
+        <button
+          className="bg-red-600 text-white px-4 py-2 rounded"
+          onClick={handleLogout}
+        >
           Cerrar sesión
         </button>
       </div>
@@ -139,14 +143,12 @@ const Admin = () => {
             ))}
           </select>
         </div>
-
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded"
           onClick={() => setMostrarFiltros(!mostrarFiltros)}
         >
           {mostrarFiltros ? "Ocultar filtros" : "Mostrar filtros"}
         </button>
-
         <div>
           <label className="block text-sm font-semibold mb-1">Ordenar por</label>
           <select
