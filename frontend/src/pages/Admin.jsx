@@ -5,7 +5,7 @@ const Admin = () => {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [errorLogin, setErrorLogin] = useState("");
   const [gestorias, setGestorias] = useState([]);
   const [provinciaFiltro, setProvinciaFiltro] = useState("");
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
@@ -16,16 +16,23 @@ const Admin = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://taxrating-backend.onrender.com/token", {
+      const res = await axios.post("https://taxrating-backend.onrender.com/token", {
         username,
         password,
       });
-      localStorage.setItem("token", response.data.access_token);
-      setToken(response.data.access_token);
-      setError("");
+      localStorage.setItem("token", res.data.access_token);
+      setToken(res.data.access_token);
+      setErrorLogin("");
     } catch {
-      setError("Credenciales incorrectas");
+      setErrorLogin("Credenciales incorrectas");
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setToken("");
+    setUsername("");
+    setPassword("");
   };
 
   useEffect(() => {
@@ -43,8 +50,8 @@ const Admin = () => {
 
   const fetchGestorias = async () => {
     try {
-      const response = await axios.get("https://taxrating-backend.onrender.com/gestorias");
-      setGestorias(response.data);
+      const res = await axios.get("https://taxrating-backend.onrender.com/gestorias");
+      setGestorias(res.data);
     } catch (error) {
       console.error("Error al obtener gestorías", error);
     }
@@ -55,22 +62,15 @@ const Admin = () => {
       await axios.delete(`https://taxrating-backend.onrender.com/gestorias/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       await axios.post("https://hook.eu2.make.com/w68s5yb2z0o7is43nx4irydynkq37bl7", {
         tipo: "eliminacion",
         nombre: name,
         email: email,
       });
-
       fetchGestorias();
     } catch (error) {
       console.error("Error al eliminar gestoría", error);
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setToken("");
   };
 
   const gestorFiltrado = gestorias
@@ -92,7 +92,7 @@ const Admin = () => {
     return (
       <div className="max-w-sm mx-auto mt-10 p-6 bg-white shadow rounded">
         <h2 className="text-2xl font-bold mb-4 text-center">Login Administrador</h2>
-        {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
+        {errorLogin && <p className="text-red-600 mb-4 text-center">{errorLogin}</p>}
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
           <input
             type="text"
@@ -125,7 +125,6 @@ const Admin = () => {
         </button>
       </div>
 
-      {/* Filtros */}
       <div className="flex flex-wrap gap-4 justify-between items-center bg-gray-100 p-4 rounded mb-4">
         <div>
           <label className="block text-sm font-semibold mb-1">Provincia</label>
@@ -140,12 +139,14 @@ const Admin = () => {
             ))}
           </select>
         </div>
+
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded"
           onClick={() => setMostrarFiltros(!mostrarFiltros)}
         >
           {mostrarFiltros ? "Ocultar filtros" : "Mostrar filtros"}
         </button>
+
         <div>
           <label className="block text-sm font-semibold mb-1">Ordenar por</label>
           <select
@@ -162,7 +163,6 @@ const Admin = () => {
         </div>
       </div>
 
-      {/* Filtros adicionales */}
       {mostrarFiltros && (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           {servicios.map((servicio) => (
@@ -188,7 +188,6 @@ const Admin = () => {
         </div>
       )}
 
-      {/* Lista de gestorías */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {gestorFiltrado.map((g) => (
           <div key={g._id} className="border rounded p-4 relative bg-white shadow">

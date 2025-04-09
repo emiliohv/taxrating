@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./Home";
 import Admin from "./Admin";
 import Formulario from "./Formulario";
-import AdminLogin from "./AdminLogin";
+//import AdminLogin from "./AdminLogin"; <Route path="/admin-login" element={<AdminLogin />} />
 import Navbar from "../components/Navbar";
 
 const App = () => {
@@ -13,8 +13,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/formulario" element={<Formulario />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/admin-login" element={<AdminLogin />} />
+        <Route path="/admin" element={<Admin />} />        
       </Routes>
     </Router>
   );
