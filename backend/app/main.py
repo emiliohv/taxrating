@@ -112,6 +112,7 @@ async def add_gestoria(gestoria: Gestoria):
         response = requests.post(
             "https://hook.eu2.make.com/w68s5yb2z0o7is43nx4irydynkq37bl7",
             json={
+                "tipo": "alta",
                 "nombre": data.get("name", ""),
                 "email": data.get("email", ""),
                 "codigo": codigo_promo,
@@ -126,10 +127,42 @@ async def add_gestoria(gestoria: Gestoria):
 
     return {"id": gestor_id}
 
-
+"""
 @app.delete("/gestorias/{id}")
 async def delete_gestoria(id: str, current_user: dict = Depends(get_current_user)):
     result = collection.delete_one({"_id": ObjectId(id)})
     if result.deleted_count == 1:
         return {"message": "Gestoría eliminada correctamente"}
     raise HTTPException(status_code=404, detail="Gestoría no encontrada")
+"""    
+@app.delete("/gestorias/{id}")
+async def delete_gestoria(id: str, current_user: dict = Depends(get_current_user)):
+    gestor = collection.find_one({"_id": ObjectId(id)})
+    if not gestor:
+        raise HTTPException(status_code=404, detail="Gestoría no encontrada")
+
+    result = collection.delete_one({"_id": ObjectId(id)})
+    if result.deleted_count == 1:
+        # Webhook a Make
+        try:
+            response = requests.post(
+                "https://hook.eu2.make.com/w68s5yb2z0o7is43nx4irydynkq37bl7",
+                json={
+                    "tipo": "eliminacion",
+                    "nombre": gestor.get("name", ""),
+                    "email": gestor.get("email", ""),
+                    "provincia": gestor.get("province", ""),
+                    "web": gestor.get("website", ""),
+                    "nif": gestor.get("nif", ""),
+                    "promocode": gestor.get("promocode", ""),
+                    "admin_email": os.getenv("ADMIN_EMAIL", "admin@taxrating.com")
+                },
+                timeout=10
+            )
+            print(f"Webhook eliminación enviado. Status: {response.status_code}")
+        except Exception as e:
+            print(f"Error al notificar eliminación a Make: {e}")
+
+        return {"message": "Gestoría eliminada correctamente"}
+
+    raise HTTPException(status_code=500, detail="No se pudo eliminar la gestoría")
