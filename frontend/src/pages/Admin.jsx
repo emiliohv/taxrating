@@ -33,23 +33,38 @@ const Admin = () => {
       setError("Usuario y contraseña son requeridos.");
       return;
     }
+
     try {
-      const response = await axios.post("https://taxrating-backend.onrender.com/token", {
-        username,
-        password,
+      const params = new URLSearchParams();
+      params.append("username", username);
+      params.append("password", password);
+
+      const response = await axios.post("https://taxrating-backend.onrender.com/token", params, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
       });
+
       localStorage.setItem("token", response.data.access_token);
       setToken(response.data.access_token);
       setError("");
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.detail) {
-        setError(error.response.data.detail);
+      if (error.response?.data?.detail) {
+        const detail = error.response.data.detail;
+        if (Array.isArray(detail)) {
+          setError(detail.map((d) => d.msg).join(" | "));
+        } else if (typeof detail === "string") {
+          setError(detail);
+        } else {
+          setError("Error desconocido en los datos.");
+        }
       } else {
-        setError("Error al intentar iniciar sesión. Intente nuevamente.");
+        setError("Error al iniciar sesión. Verifica los datos.");
       }
+      console.error("Error al hacer login:", error);
     }
   };
-  
+
   const fetchGestorias = async () => {
     try {
       const response = await axios.get("https://taxrating-backend.onrender.com/gestorias");
