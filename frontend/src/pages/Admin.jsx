@@ -29,6 +29,10 @@ const Admin = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!username || !password) {
+      setError("Usuario y contraseña son requeridos.");
+      return;
+    }
     try {
       const response = await axios.post("https://taxrating-backend.onrender.com/token", {
         username,
@@ -37,11 +41,15 @@ const Admin = () => {
       localStorage.setItem("token", response.data.access_token);
       setToken(response.data.access_token);
       setError("");
-    } catch {
-      setError("Credenciales incorrectas");
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.detail) {
+        setError(error.response.data.detail);
+      } else {
+        setError("Error al intentar iniciar sesión. Intente nuevamente.");
+      }
     }
   };
-
+  
   const fetchGestorias = async () => {
     try {
       const response = await axios.get("https://taxrating-backend.onrender.com/gestorias");
