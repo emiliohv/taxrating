@@ -67,12 +67,27 @@ const Admin = () => {
 
   const fetchGestorias = async () => {
     try {
-      const response = await axios.get("https://taxrating-backend.onrender.com/gestorias");
+      const response = await axios.get("https://taxrating-backend.onrender.com/admin/gestorias", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setGestorias(response.data);
     } catch (error) {
-      console.error("Error al obtener gestorías", error);
+      console.error("Error al obtener gestorías (admin)", error);
     }
   };
+  
+
+  const toggleActiva = async (id) => {
+    try {
+      await axios.patch(`https://taxrating-backend.onrender.com/gestorias/${id}/toggle`, null, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchGestorias(); // actualiza la vista
+    } catch (error) {
+      console.error("Error al cambiar estado de la gestoría", error);
+    }
+  };
+  
 
   const eliminarGestoria = async (id, name, email) => {
     try {
@@ -217,6 +232,15 @@ const Admin = () => {
         {gestorFiltrado.map((g) => (
           <div key={g._id} className="border rounded p-4 relative bg-white shadow">
             <button
+              className={`absolute bottom-2 right-2 text-sm px-2 py-1 rounded ${
+                g.activa ? "bg-yellow-500 text-white" : "bg-green-600 text-white"
+              }`}
+              onClick={() => toggleActiva(g._id)}
+            >
+              {g.activa ? "Desactivar" : "Activar"}
+            </button>
+
+            <button
               className="absolute top-2 right-2 text-red-500 font-bold text-xl"
               onClick={() => eliminarGestoria(g._id, g.name, g.email)}
             >
@@ -235,7 +259,10 @@ const Admin = () => {
                     <li key={serv}>
                       {serv.replace(/_/g, " ")}: {val.toFixed(1)}
                     </li>
-                  ))}
+                  ), 
+                  <p className={`text-sm ${g.activa ? "text-green-700" : "text-red-600"}`}>
+                  Estado: {g.activa ? "Activa" : "Desactivada"}
+                  </p>)}
                 </ul>
               </details>
             )}

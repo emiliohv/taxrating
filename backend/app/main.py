@@ -85,18 +85,37 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     return {"access_token": access_token, "token_type": "bearer"}
 
 
+
 @app.get("/gestorias")
 async def get_all():
+    gestorias = list(collection.find({"activa": True}, {"nif": 0, "promocode": 0}))
+    for g in gestorias:
+        g["_id"] = str(g["_id"])
+    return gestorias
+
+@app.get("/admin/gestorias")
+async def get_all_admin(current_user: dict = Depends(get_current_user)):
     gestorias = list(collection.find({}, {"nif": 0, "promocode": 0}))
     for g in gestorias:
         g["_id"] = str(g["_id"])
     return gestorias
 
-
 @app.post("/gestorias")
 async def add_gestoria(gestoria: Gestoria):
     data = gestoria.dict()
+    data["activa"] = True
     data["ratingGlobal"] = gestoria.ratings.get("Valoración Global", 0)
+    nif = data.get("nif")
+    ya_registrada = collection.find_one({"nif": nif})
+
+    if ya_registrada:
+        if not ya_registrada.get("activa", True):
+            raise HTTPException(status_code=400, detail="Asesoría en alta desactivada, póngase en contacto con nuestro personal.")
+        else:
+            raise HTTPException(status_code=400, detail="Esta Asesoría ya está de alta en la base de datos.")
+
+
+
     result = collection.insert_one(data)
     ADMIN_EMAIL= os.getenv("ADMIN_EMAIL")
     gestor_id = str(result.inserted_id)
@@ -121,14 +140,16 @@ async def add_gestoria(gestoria: Gestoria):
 
     return {"id": gestor_id}
 
-"""
-@app.delete("/gestorias/{id}")
-async def delete_gestoria(id: str, current_user: dict = Depends(get_current_user)):
-    result = collection.delete_one({"_id": ObjectId(id)})
-    if result.deleted_count == 1:
-        return {"message": "Gestoría eliminada correctamente"}
-    raise HTTPException(status_code=404, detail="Gestoría no encontrada")
-"""    
+@app.patch("/gestorias/{id}/toggle")
+async def toggle_activa(id: str, current_user: dict = Depends(get_current_user)):
+    gestor = collection.find_one({"_id": ObjectId(id)})
+    if not gestor:
+        raise HTTPException(status_code=404, detail="Gestoría no encontrada")
+
+    nueva_estado = not gestor.get("activa", True)
+    collection.update_one({"_id": ObjectId(id)}, {"$set": {"activa": nueva_estado}})
+    return {"message": f"Gestoría {'activada' if nueva_estado else 'desactivada'}", "activa": nueva_estado}
+ 
 @app.delete("/gestorias/{id}")
 async def delete_gestoria(id: str, current_user: dict = Depends(get_current_user)):
     gestor = collection.find_one({"_id": ObjectId(id)})
