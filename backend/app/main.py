@@ -110,7 +110,7 @@ async def add_gestoria(gestoria: Gestoria):
                 "email": data.get("email", ""),
                 "codigo": codigo_promo,
                 "provincia": data.get("province", ""),
-                "admin_email": ADMIN_EMAIL
+                "admin_email": "{ADMIN_EMAIL}"
             },
             timeout=10
         )
@@ -151,7 +151,7 @@ async def delete_gestoria(id: str, current_user: dict = Depends(get_current_user
                     "web": gestor.get("website", ""),
                     "nif": gestor.get("nif", ""),
                     "promocode": gestor.get("promocode", ""),
-                    "admin_email": ADMIN_EMAIL
+                    "admin_email": "{ADMIN_EMAIL}"
                 },
                 timeout=10
             )
