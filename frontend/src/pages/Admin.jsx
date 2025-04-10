@@ -10,6 +10,7 @@ const Admin = () => {
   const [gestorias, setGestorias] = useState([]);
   const [provinciaFiltro, setProvinciaFiltro] = useState("");
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
+  const [estadoFiltro, setEstadoFiltro] = useState("todas");
   const [orden, setOrden] = useState("");
   const [servicios, setServicios] = useState([]);
   const [valoresMinimos, setValoresMinimos] = useState({});
@@ -187,6 +188,19 @@ const Admin = () => {
         >
           {mostrarFiltros ? "Ocultar filtros" : "Mostrar filtros"}
         </button>
+        <div className="flex-1 min-w-[200px]">
+          <label className="block mb-1 font-medium">Estado</label>
+          <select
+            value={estadoFiltro}
+            onChange={(e) => setEstadoFiltro(e.target.value)}
+            className="w-full border border-gray-300 rounded px-2 py-1"
+          >
+            <option value="todas">Todas</option>
+            <option value="activas">Solo activas</option>
+            <option value="inactivas">Solo desactivadas</option>
+          </select>
+        </div>
+
         <div>
           <label className="block text-sm font-semibold mb-1">Ordenar por</label>
           <select
