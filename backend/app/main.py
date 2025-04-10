@@ -33,7 +33,7 @@ collection = db["gestorias"]
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
-
+ADMIN_EMAIL= os.getenv("ADMIN_EMAIL")
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
@@ -110,7 +110,7 @@ async def add_gestoria(gestoria: Gestoria):
                 "email": data.get("email", ""),
                 "codigo": codigo_promo,
                 "provincia": data.get("province", ""),
-                "admin_email": os.getenv("ADMIN_EMAIL")
+                "admin_email": ADMIN_EMAIL
             },
             timeout=10
         )
@@ -149,7 +149,7 @@ async def delete_gestoria(id: str, current_user: dict = Depends(get_current_user
                     "web": gestor.get("website", ""),
                     "nif": gestor.get("nif", ""),
                     "promocode": gestor.get("promocode", ""),
-                    "admin_email": os.getenv("ADMIN_EMAIL")
+                    "admin_email": ADMIN_EMAIL
                 },
                 timeout=10
             )
