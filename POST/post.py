@@ -20,7 +20,8 @@ for _, row in df.iterrows():
         "website": str(row.get("Web", "")),
         "location": str(row.get("Ubicación", "")),
         "province": str(row["Provincia"]),
-        "email": "",
+        "email": str(row.get("Email", "test@example.com")),
+        "nif": str(row.get("NIF", "00000000T")),
         "activa": bool(row.get("Activa", True)),
         "ratings": {
             "Valoraciones": float(row.get("Valoraciones", 0)),
