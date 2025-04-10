@@ -12,8 +12,20 @@ df.replace([np.nan, np.inf, -np.inf], 0, inplace=True)
 # API endpoint
 url = "https://taxrating-backend.onrender.com/gestorias"
 
+# Columnas de servicios valorados
+servicios = ["IRPF", "IS", "IVA", "Consolidación Fiscal", "Asesoría Internacional"]
+
 # Recorrer cada fila y enviarla al backend
 for _, row in df.iterrows():
+    ratings = {}
+    for servicio in servicios:
+        valor = float(row.get(servicio, 0))
+        if valor > 0:
+            ratings[servicio] = valor
+
+    ratings["Valoraciones"] = float(row.get("Valoraciones", 0))
+    ratings["Valoración Global"] = float(row.get("Valoración Global", 0))
+
     payload = {
         "name": str(row["Nombre"]),
         "image": str(row["Imagen"]),
@@ -23,15 +35,7 @@ for _, row in df.iterrows():
         "email": str(row.get("Email", "test@example.com")),
         "nif": str(row.get("NIF", "00000000T")),
         "activa": bool(row.get("Activa", True)),
-        "ratings": {
-            "Valoraciones": float(row.get("Valoraciones", 0)),
-            "Valoración Global": float(row.get("Valoración Global", 0)),
-            "IRPF": float(row.get("IRPF", 0)),
-            "IS": float(row.get("IS", 0)),
-            "IVA": float(row.get("IVA", 0)),
-            "Consolidación Fiscal": float(row.get("Consolidación Fiscal", 0)),
-            "Asesoría Internacional": float(row.get("Asesoría Internacional", 0))
-        }
+        "ratings": ratings
     }
 
     try:

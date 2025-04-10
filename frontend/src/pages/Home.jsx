@@ -136,16 +136,26 @@ const Home = () => {
                 <p className="text-sm text-gray-600">
                   Valoraciones: {valoraciones > 0 ? parseInt(valoraciones) : "Sin valoraciones"}
                 </p>
-                <details className="mt-2">
-                  <summary className="cursor-pointer text-blue-600">Ver servicios valorados</summary>
-                  <div className="mt-2">
-                    {Object.entries(g.ratings || {}).map(([key, value]) => (
-                      key !== "Valoraciones" && key !== "Valoración Global" && (
-                        <p key={key} className={`text-sm ${getColorClass(value)}`}>{key}: {value?.toFixed(1)}</p>
-                      )
-                    ))}
-                  </div>
-                </details>
+                {g.ratings && Object.entries(g.ratings).some(
+                    ([key, val]) =>
+                      key !== "Valoraciones" &&
+                      key !== "Valoración Global" &&
+                      typeof val === "number" &&
+                      val > 0
+                  ) && (
+                    <details className="mt-2">
+                      <summary className="cursor-pointer text-blue-600">Ver servicios valorados</summary>
+                      <div className="mt-2">
+                        {Object.entries(g.ratings).map(([key, value]) => (
+                          key !== "Valoraciones" && key !== "Valoración Global" && value > 0 && (
+                            <p key={key} className={`text-sm ${getColorClass(value)}`}>
+                              {key}: {value.toFixed(1)}
+                            </p>
+                          )
+                        ))}
+                      </div>
+                    </details>
+                  )}
                 <div className="flex gap-4 mt-3">
                   {g.website && (
                     <a href={g.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 flex items-center gap-1">
