@@ -76,6 +76,7 @@ class Gestoria(BaseModel):
     nif: str
     promocode: str = ""
     ratings: dict = {}
+    activa: bool = True 
 
 @app.post("/token")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):

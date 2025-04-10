@@ -1,3 +1,4 @@
+
 import pandas as pd
 import requests
 import numpy as np
@@ -20,6 +21,7 @@ for _, row in df.iterrows():
         "location": str(row.get("Ubicación", "")),
         "province": str(row["Provincia"]),
         "email": "",
+        "activa": bool(row.get("Activa", True)),
         "ratings": {
             "Valoraciones": float(row.get("Valoraciones", 0)),
             "Valoración Global": float(row.get("Valoración Global", 0)),
