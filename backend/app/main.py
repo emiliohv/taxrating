@@ -140,6 +140,7 @@ async def delete_gestoria(id: str, current_user: dict = Depends(get_current_user
         # Webhook a Make
         try:
             ADMIN_EMAIL= os.getenv("ADMIN_EMAIL")
+            print(f"ADMIN_EMAIL cargado: {ADMIN_EMAIL}")
             response = requests.post(
                 MAKE_WEBHOOK_URL,
                 json={
