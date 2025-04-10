@@ -149,7 +149,28 @@ async def toggle_activa(id: str, current_user: dict = Depends(get_current_user))
 
     nueva_estado = not gestor.get("activa", True)
     collection.update_one({"_id": ObjectId(id)}, {"$set": {"activa": nueva_estado}})
+    ADMIN_EMAIL= os.getenv("ADMIN_EMAIL")
+    # 🔽 Aquí va el bloque para notificar a Make
+    try:
+        if MAKE_WEBHOOK_URL:
+            requests.post(
+                MAKE_WEBHOOK_URL,
+                json={
+                    "tipo": "cambio_estado",
+                    "subtipo": "activada" if nueva_estado else "desactivada",
+                    "nombre": gestor.get("name", ""),
+                    "email": gestor.get("email", ""),
+                    "provincia": gestor.get("province", ""),
+                    "admin_email": ADMIN_EMAIL
+                },
+                timeout=10
+            )
+            print(f"Notificación de cambio de estado enviada a Make ({'activada' if nueva_estado else 'desactivada'})")
+    except Exception as e:
+        print(f"Error notificando cambio de estado a Make: {e}")
+
     return {"message": f"Gestoría {'activada' if nueva_estado else 'desactivada'}", "activa": nueva_estado}
+
  
 @app.delete("/gestorias/{id}")
 async def delete_gestoria(id: str, current_user: dict = Depends(get_current_user)):
