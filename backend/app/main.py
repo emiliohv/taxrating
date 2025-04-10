@@ -12,6 +12,8 @@ import requests
 
 app = FastAPI()
 
+MAKE_WEBHOOK_URL = os.getenv("MAKE_WEBHOOK_URL")
+
 origins = [
     "http://localhost:5173",
     "https://taxrating.vercel.app",
@@ -89,14 +91,6 @@ async def get_all():
     for g in gestorias:
         g["_id"] = str(g["_id"])
     return gestorias
-"""
-@app.post("/gestorias")
-async def add_gestoria(gestoria: Gestoria):
-    data = gestoria.dict()
-    data["ratingGlobal"] = gestoria.ratings.get("Valoración Global", 0)
-    result = collection.insert_one(data)
-    return {"id": str(result.inserted_id)}
-"""
 
 
 @app.post("/gestorias")
@@ -109,14 +103,14 @@ async def add_gestoria(gestoria: Gestoria):
     codigo_promo = gestor_id[-6:]
 
     try:
-        response = requests.post(
-            "https://hook.eu2.make.com/w68s5yb2z0o7is43nx4irydynkq37bl7",
+        response = requests.post(MAKE_WEBHOOK_URL,
             json={
                 "tipo": "alta",
                 "nombre": data.get("name", ""),
                 "email": data.get("email", ""),
                 "codigo": codigo_promo,
-                "provincia": data.get("province", "")
+                "provincia": data.get("province", ""),
+                "admin_email": os.getenv("ADMIN_EMAIL")
             },
             timeout=10
         )
@@ -146,7 +140,7 @@ async def delete_gestoria(id: str, current_user: dict = Depends(get_current_user
         # Webhook a Make
         try:
             response = requests.post(
-                "https://hook.eu2.make.com/w68s5yb2z0o7is43nx4irydynkq37bl7",
+                MAKE_WEBHOOK_URL,
                 json={
                     "tipo": "eliminacion",
                     "nombre": gestor.get("name", ""),
@@ -155,7 +149,7 @@ async def delete_gestoria(id: str, current_user: dict = Depends(get_current_user
                     "web": gestor.get("website", ""),
                     "nif": gestor.get("nif", ""),
                     "promocode": gestor.get("promocode", ""),
-                    "admin_email": os.getenv("ADMIN_EMAIL", "admin@taxrating.com")
+                    "admin_email": os.getenv("ADMIN_EMAIL")
                 },
                 timeout=10
             )
