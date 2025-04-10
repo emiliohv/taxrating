@@ -33,7 +33,7 @@ collection = db["gestorias"]
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
-ADMIN_EMAIL= os.getenv("ADMIN_EMAIL")
+
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
@@ -98,10 +98,10 @@ async def add_gestoria(gestoria: Gestoria):
     data = gestoria.dict()
     data["ratingGlobal"] = gestoria.ratings.get("Valoración Global", 0)
     result = collection.insert_one(data)
-
+    ADMIN_EMAIL= os.getenv("ADMIN_EMAIL")
     gestor_id = str(result.inserted_id)
     codigo_promo = gestor_id[-6:]
-
+    print(f"ADMIN_EMAIL cargado: {ADMIN_EMAIL}")
     try:
         response = requests.post(MAKE_WEBHOOK_URL,
             json={
@@ -139,6 +139,7 @@ async def delete_gestoria(id: str, current_user: dict = Depends(get_current_user
     if result.deleted_count == 1:
         # Webhook a Make
         try:
+            ADMIN_EMAIL= os.getenv("ADMIN_EMAIL")
             response = requests.post(
                 MAKE_WEBHOOK_URL,
                 json={
