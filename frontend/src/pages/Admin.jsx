@@ -174,7 +174,7 @@ const Admin = () => {
         </button>
       </div>
 
-      <div className="flex flex-wrap gap-4 justify-between items-center bg-gray-100 p-4 rounded mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 bg-gray-100 p-6 rounded mb-6 items-end">
         <div>
           <label className="block text-sm font-semibold mb-1">Provincia</label>
           <select
@@ -189,7 +189,7 @@ const Admin = () => {
           </select>
         </div>
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-500 text-white px-4 py-2 rounded w-full"
           onClick={() => setMostrarFiltros(!mostrarFiltros)}
         >
           {mostrarFiltros ? "Ocultar filtros" : "Mostrar filtros"}
@@ -199,7 +199,7 @@ const Admin = () => {
           <select
             value={estadoFiltro}
             onChange={(e) => setEstadoFiltro(e.target.value)}
-            className="w-full border border-gray-300 rounded px-2 py-1"
+            className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
           >
             <option value="todas">Todas</option>
             <option value="activas">Solo activas</option>
