@@ -114,19 +114,25 @@ const Admin = () => {
   };
 
   const gestorFiltrado = gestorias
-    .filter((g) => !provinciaFiltro || g.province === provinciaFiltro)
-    .filter((g) =>
-      Object.entries(valoresMinimos).every(
-        ([servicio, valor]) => (g.ratings?.[servicio] || 0) >= valor
-      )
+  .filter((g) => {
+    if (estadoFiltro === "activas") return g.activa;
+    if (estadoFiltro === "inactivas") return !g.activa;
+    return true; // todas
+  })
+  .filter((g) => !provinciaFiltro || g.province === provinciaFiltro)
+  .filter((g) =>
+    Object.entries(valoresMinimos).every(
+      ([servicio, valor]) => (g.ratings?.[servicio] || 0) >= valor
     )
-    .sort((a, b) => {
-      if (orden === "alfabetico-asc") return a.name.localeCompare(b.name);
-      if (orden === "alfabetico-desc") return b.name.localeCompare(a.name);
-      if (orden === "valoracion-asc") return a.ratingGlobal - b.ratingGlobal;
-      if (orden === "valoracion-desc") return b.ratingGlobal - a.ratingGlobal;
-      return 0;
-    });
+  )
+  .sort((a, b) => {
+    if (orden === "alfabetico-asc") return a.name.localeCompare(b.name);
+    if (orden === "alfabetico-desc") return b.name.localeCompare(a.name);
+    if (orden === "valoracion-asc") return a.ratingGlobal - b.ratingGlobal;
+    if (orden === "valoracion-desc") return b.ratingGlobal - a.ratingGlobal;
+    return 0;
+  });
+
 
   if (!token) {
     return (
