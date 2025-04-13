@@ -18,7 +18,27 @@ const Admin = () => {
   useEffect(() => {
     if (token) fetchGestorias();
   }, [token]);
-
+  useEffect(() => {
+    if (!token) return;
+  
+    const validarToken = async () => {
+      try {
+        const response = await axios.get("https://taxrating-backend.onrender.com/admin/gestorias", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        // Si el token es válido, no hacemos nada (seguimos como siempre)
+      } catch (error) {
+        if (error.response?.status === 401) {
+          localStorage.removeItem("token");
+          setToken("");
+          setError("Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.");
+        }
+      }
+    };
+  
+    validarToken();
+  }, []);
+  
   useEffect(() => {
     const todasProvincias = [...new Set(gestorias.map((g) => g.province))];
     const todosServicios = new Set();
@@ -77,6 +97,7 @@ const Admin = () => {
   
       if (error.response?.status === 401) {
         // El token ya no es válido (caducado o manipulado)
+        
         localStorage.removeItem("token");
         setToken("");
         setError("Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.");
