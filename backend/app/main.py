@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Body, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
@@ -102,44 +102,57 @@ async def get_all_admin(current_user: dict = Depends(get_current_user)):
     return gestorias
 
 @app.post("/gestorias")
-async def add_gestoria(gestoria: Gestoria):
-    data = gestoria.dict()
-    data["activa"] = True
-    data["ratingGlobal"] = gestoria.ratings.get("Valoración Global", 0)
-    nif = data.get("nif")
-    ya_registrada = collection.find_one({"nif": nif})
-
-    if ya_registrada:
-        if not ya_registrada.get("activa", True):
-            raise HTTPException(status_code=400, detail="Asesoría en alta desactivada, póngase en contacto con nuestro personal.")
-        else:
-            raise HTTPException(status_code=400, detail="Esta Asesoría ya está de alta en la base de datos.")
+async def add_gestoria(gestoria: Gestoria, recaptcha: str = Body(...)):
+     def verify_recaptcha(token: str) -> bool:
+        secret_key = os.getenv("RECAPTCHA_SECRET_KEY")
+        response = requests.post(
+            "https://www.google.com/recaptcha/api/siteverify",
+            data={"secret": secret_key, "response": token}
+    )
+        result = response.json()
+        return result.get("success", False)
 
 
+     if not verify_recaptcha(recaptcha):
+        raise HTTPException(status_code=400, detail="Captcha inválido. Por favor, verifica que no eres un robot.")
 
-    result = collection.insert_one(data)
-    ADMIN_EMAIL= os.getenv("ADMIN_EMAIL")
-    gestor_id = str(result.inserted_id)
-    codigo_promo = gestor_id[-6:]
-    print(f"ADMIN_EMAIL cargado: {ADMIN_EMAIL}")
-    try:
-        response = requests.post(MAKE_WEBHOOK_URL,
-            json={
-                "tipo": "alta",
-                "nombre": data.get("name", ""),
-                "email": data.get("email", ""),
-                "codigo": codigo_promo,
-                "provincia": data.get("province", ""),
-                "admin_email": ADMIN_EMAIL
-            },
-            timeout=10
-        )
-        print(f"Webhook status: {response.status_code}")
-        print(response.text)
-    except Exception as e:
-        print(f"Error notificando a Make: {e}")
+        data = gestoria.dict()
+        data["activa"] = True
+        data["ratingGlobal"] = gestoria.ratings.get("Valoración Global", 0)
+        nif = data.get("nif")
+        ya_registrada = collection.find_one({"nif": nif})
 
-    return {"id": gestor_id}
+        if ya_registrada:
+            if not ya_registrada.get("activa", True):
+                raise HTTPException(status_code=400, detail="Asesoría en alta desactivada, póngase en contacto con nuestro personal.")
+            else:
+                raise HTTPException(status_code=400, detail="Esta Asesoría ya está de alta en la base de datos.")
+
+
+
+        result = collection.insert_one(data)
+        ADMIN_EMAIL= os.getenv("ADMIN_EMAIL")
+        gestor_id = str(result.inserted_id)
+        codigo_promo = gestor_id[-6:]
+        print(f"ADMIN_EMAIL cargado: {ADMIN_EMAIL}")
+        try:
+            response = requests.post(MAKE_WEBHOOK_URL,
+                json={
+                    "tipo": "alta",
+                    "nombre": data.get("name", ""),
+                    "email": data.get("email", ""),
+                    "codigo": codigo_promo,
+                    "provincia": data.get("province", ""),
+                    "admin_email": ADMIN_EMAIL
+                },
+                timeout=10
+            )
+            print(f"Webhook status: {response.status_code}")
+            print(response.text)
+        except Exception as e:
+            print(f"Error notificando a Make: {e}")
+
+        return {"id": gestor_id}
 
 @app.patch("/gestorias/{id}/toggle")
 async def toggle_activa(id: str, current_user: dict = Depends(get_current_user)):

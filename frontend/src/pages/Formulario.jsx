@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+import ReCAPTCHA from "react-google-recaptcha";
+const [recaptchaToken, setRecaptchaToken] = useState("");
 const Formulario = () => {
   const [form, setForm] = useState({
     name: "",
@@ -45,22 +46,35 @@ const Formulario = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     if (!form.name || !form.province || !form.email || !form.nif) {
       setError("Por favor, completa los campos obligatorios.");
       return;
     }
+  
     if (!validarNIF(form.nif)) {
       setError("NIF no válido. Verifica el formato de DNI, NIE o CIF.");
       return;
     }
+  
+    if (!recaptchaToken) {
+      setError("Por favor, verifica que no eres un robot.");
+      return;
+    }
+  
     try {
-      await axios.post("https://taxrating-backend.onrender.com/gestorias", form);
+      await axios.post("https://taxrating-backend.onrender.com/gestorias", {
+        ...form,
+        ratings: {},
+        recaptcha: recaptchaToken,
+      });
       setEnviado(true);
       setError("");
     } catch {
       setError("Error al enviar los datos.");
     }
   };
+  
 
   if (enviado) {
     return <p className="text-center text-green-600 text-lg mt-6">Gestoría enviada con éxito.</p>;
@@ -122,6 +136,11 @@ const Formulario = () => {
           Código Recomendación/Promoción 
           <input type="text" name="promocode" value={form.promocode} onChange={handleChange} className="border p-2 rounded w-full" />
         </label>
+          <ReCAPTCHA
+          sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+          onChange={(token) => setRecaptchaToken(token)}
+          />
+
         <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Enviar</button>
       </form>
     </div>
