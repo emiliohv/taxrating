@@ -74,8 +74,16 @@ const Admin = () => {
       setGestorias(response.data);
     } catch (error) {
       console.error("Error al obtener gestorías (admin)", error);
+  
+      if (error.response?.status === 401) {
+        // El token ya no es válido (caducado o manipulado)
+        localStorage.removeItem("token");
+        setToken("");
+        setError("Tu sesión ha expirado. Por favor, vuelve a iniciar sesión.");
+      }
     }
   };
+  
   
 
   const toggleActiva = async (id) => {
