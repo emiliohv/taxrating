@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import ReCAPTCHA from "react-google-recaptcha";
-const [recaptchaToken, setRecaptchaToken] = useState("");
+
 const Formulario = () => {
+  
+  const [recaptchaToken, setRecaptchaToken] = useState("");
   const [form, setForm] = useState({
     name: "",
     image: "",
