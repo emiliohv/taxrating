@@ -56,6 +56,14 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
+def verify_recaptcha(token: str) -> bool:
+        secret_key = os.getenv("RECAPTCHA_SECRET_KEY")
+        response = requests.post(
+            "https://www.google.com/recaptcha/api/siteverify",
+            data={"secret": secret_key, "response": token}
+    )
+        result = response.json()
+        return result.get("success", False)
 def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -103,16 +111,7 @@ async def get_all_admin(current_user: dict = Depends(get_current_user)):
 
 @app.post("/gestorias")
 async def add_gestoria(gestoria: Gestoria, recaptcha: str = Body(...)):
-     def verify_recaptcha(token: str) -> bool:
-        secret_key = os.getenv("RECAPTCHA_SECRET_KEY")
-        response = requests.post(
-            "https://www.google.com/recaptcha/api/siteverify",
-            data={"secret": secret_key, "response": token}
-    )
-        result = response.json()
-        return result.get("success", False)
-
-
+     
      if not verify_recaptcha(recaptcha):
         raise HTTPException(status_code=400, detail="Captcha inválido. Por favor, verifica que no eres un robot.")
 

@@ -63,7 +63,7 @@ const Formulario = () => {
       setError("Por favor, verifica que no eres un robot.");
       return;
     }
-  
+    console.log(recaptchaToken)
     try {
       await axios.post("https://taxrating-backend.onrender.com/gestorias", {
         ...form,
@@ -72,8 +72,9 @@ const Formulario = () => {
       });
       setEnviado(true);
       setError("");
-    } catch {
-      setError("Error al enviar los datos.");
+    } catch (err) {
+      console.error("Respuesta del servidor:", err.response);
+      setError(err.response?.data?.detail || "Error al enviar los datos.");
     }
   };
   
