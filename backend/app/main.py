@@ -17,7 +17,6 @@ MAKE_WEBHOOK_URL = os.getenv("MAKE_WEBHOOK_URL")
 origins = [
     "http://localhost:5173",
     "https://taxrating.vercel.app",
-    "https://taxrating-git-main-emiliohv1985s-projects.vercel.app"
 ]
 
 app.add_middleware(
