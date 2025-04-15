@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Body, Depends
+from fastapi import FastAPI, HTTPException, Body, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
@@ -13,6 +13,7 @@ import requests
 app = FastAPI()
 
 MAKE_WEBHOOK_URL = os.getenv("MAKE_WEBHOOK_URL")
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
 
 origins = [
     "http://localhost:5173",
@@ -56,14 +57,16 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
+# Esta función debe estar definida en el archivo (si no la tienes, pídemela)
 def verify_recaptcha(token: str) -> bool:
-        secret_key = os.getenv("RECAPTCHA_SECRET_KEY")
-        response = requests.post(
-            "https://www.google.com/recaptcha/api/siteverify",
-            data={"secret": secret_key, "response": token}
+    secret_key = os.getenv("RECAPTCHA_SECRET_KEY")
+    response = requests.post(
+        "https://www.google.com/recaptcha/api/siteverify",
+        data={"secret": secret_key, "response": token}
     )
-        result = response.json()
-        return result.get("success", False)
+    result = response.json()
+    print("Resultado reCAPTCHA:", result)  # Para depuración
+    return result.get("success", False)
 def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -110,32 +113,37 @@ async def get_all_admin(current_user: dict = Depends(get_current_user)):
     return gestorias
 
 @app.post("/gestorias")
-async def add_gestoria(gestoria: Gestoria, recaptcha: str = Body(...)):
-     
-     if not verify_recaptcha(recaptcha):
+async def add_gestoria(request: Request):
+    data = await request.json()
+
+    recaptcha_token = data.get("recaptcha")
+    if not recaptcha_token or not verify_recaptcha(recaptcha_token):
         raise HTTPException(status_code=400, detail="Captcha inválido. Por favor, verifica que no eres un robot.")
 
-        data = gestoria.dict()
-        data["activa"] = True
-        data["ratingGlobal"] = gestoria.ratings.get("Valoración Global", 0)
-        nif = data.get("nif")
-        ya_registrada = collection.find_one({"nif": nif})
+    # Validación por NIF
+    nif = data.get("nif")
+    if not nif:
+        raise HTTPException(status_code=400, detail="NIF obligatorio.")
 
-        if ya_registrada:
-            if not ya_registrada.get("activa", True):
-                raise HTTPException(status_code=400, detail="Asesoría en alta desactivada, póngase en contacto con nuestro personal.")
-            else:
-                raise HTTPException(status_code=400, detail="Esta Asesoría ya está de alta en la base de datos.")
+    ya_registrada = collection.find_one({"nif": nif})
+    if ya_registrada:
+        if not ya_registrada.get("activa", True):
+            raise HTTPException(status_code=400, detail="Asesoría en alta desactivada, póngase en contacto con nuestro personal.")
+        else:
+            raise HTTPException(status_code=400, detail="Esta Asesoría ya está de alta en la base de datos.")
 
+    data["ratingGlobal"] = data.get("ratings", {}).get("Valoración Global", 0)
+    data["activa"] = True
 
+    result = collection.insert_one(data)
+    gestor_id = str(result.inserted_id)
+    codigo_promo = gestor_id[-6:]
 
-        result = collection.insert_one(data)
-        ADMIN_EMAIL= os.getenv("ADMIN_EMAIL")
-        gestor_id = str(result.inserted_id)
-        codigo_promo = gestor_id[-6:]
-        print(f"ADMIN_EMAIL cargado: {ADMIN_EMAIL}")
-        try:
-            response = requests.post(MAKE_WEBHOOK_URL,
+    # Enviar alta a Make
+    try:
+        if MAKE_WEBHOOK_URL:
+            requests.post(
+                MAKE_WEBHOOK_URL,
                 json={
                     "tipo": "alta",
                     "nombre": data.get("name", ""),
@@ -146,12 +154,10 @@ async def add_gestoria(gestoria: Gestoria, recaptcha: str = Body(...)):
                 },
                 timeout=10
             )
-            print(f"Webhook status: {response.status_code}")
-            print(response.text)
-        except Exception as e:
-            print(f"Error notificando a Make: {e}")
+    except Exception as e:
+        print(f"Error notificando a Make: {e}")
 
-        return {"id": gestor_id}
+    return {"id": gestor_id}
 
 @app.patch("/gestorias/{id}/toggle")
 async def toggle_activa(id: str, current_user: dict = Depends(get_current_user)):

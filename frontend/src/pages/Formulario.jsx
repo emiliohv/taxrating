@@ -74,10 +74,19 @@ const Formulario = () => {
       setError("");
     } catch (err) {
       console.error("Respuesta del servidor:", err.response);
-      setError(err.response?.data?.detail || "Error al enviar los datos.");
+    
+      const detail = err.response?.data?.detail;
+    
+      if (Array.isArray(detail)) {
+        // Combinar todos los mensajes de error
+        setError(detail.map((d) => d.msg).join(" | "));
+      } else if (typeof detail === "string") {
+        setError(detail);
+      } else {
+        setError("Error inesperado. Intenta más tarde.");
+      }
     }
-  };
-  
+  }
 
   if (enviado) {
     return <p className="text-center text-green-600 text-lg mt-6">Gestoría enviada con éxito.</p>;
@@ -86,7 +95,18 @@ const Formulario = () => {
   return (
     <div className="max-w-xl mx-auto mt-6 bg-white p-6 rounded shadow">
       <h2 className="text-2xl font-bold mb-4 text-center">Alta nueva asesoría</h2>
-      {error && <p className="text-red-600 text-sm mb-2 text-center">{error}</p>}
+              {error && (
+          <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded text-sm text-center mb-4">
+            {error}
+          </div>
+        )}
+
+        {enviado && (
+          <div className="bg-green-100 border border-green-300 text-green-700 px-4 py-2 rounded text-sm text-center mb-4">
+            Gestoría enviada con éxito.
+          </div>
+        )}
+
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <label>
           NIF <span className="text-red-600">*</span>
