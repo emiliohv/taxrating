@@ -12,22 +12,22 @@ const Faqs = () => {
     {
       pregunta: "¿Qué ventajas tiene para mi asesoría?",
       respuesta:
-        "Mejora de reputación profesional, atracción de nuevos clientes, visibilidad online, posibilidad de ingresos extra y acceso a informes de calidad fiscal."
+        "Mejora de reputación profesional, atracción de nuevos clientes, visibilidad online, posibilidad de ingresos extra y acceso a informes de calidad desde el punto de vista fiscal."
     },
     {
       pregunta: "¿Quién realiza las auditorías fiscales?",
       respuesta:
-        "Antiguos inspectores y técnicos de Hacienda en excedencia, con experiencia directa en tareas de comprobación tributaria para la Administración Pública."
+        "Siempre serán realizadas por antiguos Inspectores y Técnicos de Hacienda en excedencia, con experiencia previa en tareas de comprobación tributaria para la Administración Pública."
     },
     {
       pregunta: "¿Cómo se evalúa nuestro trabajo?",
       respuesta:
-        "Se revisan aspectos como la aplicación correcta de la normativa fiscal, calidad de las deducciones aplicadas, cumplimiento de obligaciones y riesgos de inspección."
+        "Se revisan aspectos como la aplicación correcta de la normativa fiscal, cumplimiento de obligaciones y riesgos de inspección."
     },
     {
       pregunta: "¿Cuál es el coste del servicio para las gestorías?",
       respuesta:
-        "Una cuota mensual fija, igual para todas. Se puede obtener un descuento permanente del 20% por recomendar otras asesorías que permanezcan activas."
+        "Una cuota mensual fija, igual para todas. Se puede obtener un descuento permanente del 20% por cada asesoría a la que nos recomienden y permanezcan activas, por lo que el servicio puede llegar a ser gratuito para ellas."
     },
     {
       pregunta: "¿Puedo ganar ingresos como asesoría?",
@@ -37,7 +37,7 @@ const Faqs = () => {
     {
       pregunta: "¿Cómo me doy de alta como gestoría?",
       respuesta:
-        "Desde la sección 'Alta nueva asesoría' de la web. Solo necesitas rellenar el formulario con los datos requeridos y estarás visible tras verificación."
+        "Desde la sección 'Formulario'/'Alta nueva asesoría' de la web. Solo necesitas rellenar el formulario con los datos requeridos y estarás visible tras verificación."
     },
     {
       pregunta: "¿Qué pasa si un cliente solicita una auditoría sobre mí?",
@@ -65,7 +65,7 @@ const Faqs = () => {
     {
       pregunta: "¿Quién realiza la auditoría?",
       respuesta:
-        "Antiguos inspectores y técnicos de Hacienda, con experiencia en tareas de control tributario. No tienen relación ni contigo ni con tu gestoría."
+        "Siempre las realizarán antiguos Inspectores y Técnicos de Hacienda, con experiencia en tareas de control tributario. No tienen relación ni contigo ni con tu gestoría, por lo que actúan con plena independencia y objetividad."
     },
     {
       pregunta: "¿Qué utilidad tiene para mí?",
@@ -75,7 +75,7 @@ const Faqs = () => {
     {
       pregunta: "¿Qué documentación tengo que aportar?",
       respuesta:
-        "Modelos fiscales (IVA, IRPF o IS), libros contables y otros documentos básicos. Tu asesoría puede ayudarte si lo autorizas."
+        "Modelos presentados si los conservas (IVA, IRPF o IS), libros registro o contables, documentación justificativa y otros documentos básicos. Tu asesoría puede ayudarte si lo autorizas."
     },
     {
       pregunta: "¿Es confidencial?",
@@ -85,7 +85,7 @@ const Faqs = () => {
     {
       pregunta: "¿Cuánto cuesta una auditoría?",
       respuesta:
-        "El precio es del 120% de lo que pagaste a tu gestoría ese ejercicio, con un mínimo de 2.000€ + IVA. Esto incluye también el trabajo de documentación."
+        "El precio es del 120% de lo que pagaste a tu gestoría ese ejercicio, con un mínimo de 2.000€ + IVA. Esto incluye también el trabajo de documentación que tenemos que pagar a tu gestoría."
     },
     {
       pregunta: "¿Qué incluye ese precio?",
@@ -95,7 +95,7 @@ const Faqs = () => {
     {
       pregunta: "¿Puedo usar el informe ante Hacienda?",
       respuesta:
-        "Sí. Aunque no sustituye a un informe oficial, puede ayudarte a corregir errores o defenderte con base técnica si surge una revisión."
+        "Sí. Aunque no sustituye a un informe oficial, puede ayudarte a corregir errores o defenderte con base técnica si se iniciara una comprobación o inspección."
     },
     {
       pregunta: "¿Puedo cambiar de asesoría si encuentro una mejor valorada?",
