@@ -10,6 +10,14 @@ import Faqs from "./Faqs";
 import Navbar from "../components/Navbar";
 
 const App = () => {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://www.chatbase.co/embed.min.js";
+    script.setAttribute("chatbotId", "5MOIiTyE40phPFDVMb07R"); // 🔁 Sustituye por tu ID real
+    script.setAttribute("domain", "https://www.chatbase.co");
+    script.defer = true;
+    document.body.appendChild(script);
+  }, [])
   return (
     <Router>
       <Navbar />
