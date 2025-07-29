@@ -6,12 +6,6 @@ import Formulario from "./Formulario";
 import Faqs from "./Faqs";
 import Navbar from "./components/Navbar";
 
-
-const App = () => {
-  useEffect(() => {
-    console.log("useEffect está funcionando correctamente");
-  }, []);
-
   return (
     <Router>
       <Navbar />
@@ -23,6 +17,6 @@ const App = () => {
       </Routes>
     </Router>
   );
-};
+
 
 export default App;
