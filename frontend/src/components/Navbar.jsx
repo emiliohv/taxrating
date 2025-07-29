@@ -10,8 +10,9 @@ const Navbar = () => {
       <Link to="/formulario" className="hover:underline text-lg font-semibold">
         Formulario
       </Link>
-      <Link to="/faqs" className="hover:underline">Preguntas frecuentes</Link>
-
+      <Link to="/faqs" className="over:underline text-lg font-semibold">
+      Preguntas frecuentes
+      </Link>
       <Link to="/admin" className="hover:underline text-lg font-semibold">
         Admin
       </Link>

@@ -6,25 +6,107 @@ const Faqs = () => {
   const faqsGestoria = [
     {
       pregunta: "¿Qué es TaxRating?",
-      respuesta: "Es una plataforma de auditoría fiscal profesional realizada por antiguos inspectores y técnicos de Hacienda..."
+      respuesta:
+        "Es una plataforma de auditoría fiscal profesional realizada por antiguos inspectores y técnicos de Hacienda, que evalúan la calidad del trabajo fiscal realizado por tu gestoría."
     },
     {
       pregunta: "¿Qué ventajas tiene para mi asesoría?",
-      respuesta: "Reputación objetiva, confianza para clientes, posibilidad de obtener ingresos y descuentos..."
+      respuesta:
+        "Mejora de reputación profesional, atracción de nuevos clientes, visibilidad online, posibilidad de ingresos extra y acceso a informes de calidad fiscal."
     },
-    // ... (añadimos el resto luego)
+    {
+      pregunta: "¿Quién realiza las auditorías fiscales?",
+      respuesta:
+        "Antiguos inspectores y técnicos de Hacienda en excedencia, con experiencia directa en tareas de comprobación tributaria para la Administración Pública."
+    },
+    {
+      pregunta: "¿Cómo se evalúa nuestro trabajo?",
+      respuesta:
+        "Se revisan aspectos como la aplicación correcta de la normativa fiscal, calidad de las deducciones aplicadas, cumplimiento de obligaciones y riesgos de inspección."
+    },
+    {
+      pregunta: "¿Cuál es el coste del servicio para las gestorías?",
+      respuesta:
+        "Una cuota mensual fija, igual para todas. Se puede obtener un descuento permanente del 20% por recomendar otras asesorías que permanezcan activas."
+    },
+    {
+      pregunta: "¿Puedo ganar ingresos como asesoría?",
+      respuesta:
+        "Sí, si consigues un cliente que contrate una auditoría, recibes un 20% de lo facturado por nuestra parte, en concepto de preparación documental y captación del cliente."
+    },
+    {
+      pregunta: "¿Cómo me doy de alta como gestoría?",
+      respuesta:
+        "Desde la sección 'Alta nueva asesoría' de la web. Solo necesitas rellenar el formulario con los datos requeridos y estarás visible tras verificación."
+    },
+    {
+      pregunta: "¿Qué pasa si un cliente solicita una auditoría sobre mí?",
+      respuesta:
+        "Recibirás una notificación. Si colaboras en la preparación de la documentación, también recibirás el 20% correspondiente como compensación."
+    },
+    {
+      pregunta: "¿Qué ocurre si la auditoría es negativa?",
+      respuesta:
+        "La información te será comunicada y podrás usarla para mejorar. El informe solo se publica si el cliente lo autoriza. Siempre buscamos ayudarte, no penalizarte."
+    },
+    {
+      pregunta: "¿Mis valoraciones son públicas?",
+      respuesta:
+        "Solo si el cliente lo autoriza. Tú siempre tendrás acceso al resultado, independientemente de si se publica."
+    }
   ];
 
   const faqsCliente = [
     {
       pregunta: "¿Qué es una auditoría fiscal de mi gestoría?",
-      respuesta: "Es una revisión objetiva e independiente del trabajo fiscal que tu asesoría ha realizado..."
+      respuesta:
+        "Es una revisión objetiva e independiente del trabajo fiscal que tu asesoría ha realizado durante un ejercicio económico."
     },
     {
-      pregunta: "¿Quién hace esa revisión?",
-      respuesta: "Auditores fiscales con experiencia como inspectores y técnicos de Hacienda en excedencia..."
+      pregunta: "¿Quién realiza la auditoría?",
+      respuesta:
+        "Antiguos inspectores y técnicos de Hacienda, con experiencia en tareas de control tributario. No tienen relación ni contigo ni con tu gestoría."
     },
-    // ... (añadimos el resto luego)
+    {
+      pregunta: "¿Qué utilidad tiene para mí?",
+      respuesta:
+        "Saber si estás pagando correctamente tus impuestos, si podrías haber optimizado tu situación fiscal y detectar errores o riesgos antes de que lo haga Hacienda."
+    },
+    {
+      pregunta: "¿Qué documentación tengo que aportar?",
+      respuesta:
+        "Modelos fiscales (IVA, IRPF o IS), libros contables y otros documentos básicos. Tu asesoría puede ayudarte si lo autorizas."
+    },
+    {
+      pregunta: "¿Es confidencial?",
+      respuesta:
+        "Sí. Solo tú y el equipo auditor tendréis acceso a los datos, salvo que decidas compartir el resultado con tu asesoría."
+    },
+    {
+      pregunta: "¿Cuánto cuesta una auditoría?",
+      respuesta:
+        "El precio es del 120% de lo que pagaste a tu gestoría ese ejercicio, con un mínimo de 2.000€ + IVA. Esto incluye también el trabajo de documentación."
+    },
+    {
+      pregunta: "¿Qué incluye ese precio?",
+      respuesta:
+        "Auditoría fiscal completa, informe de calidad, evaluación de riesgos y optimización, posibilidad de compartirlo con tu asesoría, y soporte para resolver errores si se detectan."
+    },
+    {
+      pregunta: "¿Puedo usar el informe ante Hacienda?",
+      respuesta:
+        "Sí. Aunque no sustituye a un informe oficial, puede ayudarte a corregir errores o defenderte con base técnica si surge una revisión."
+    },
+    {
+      pregunta: "¿Puedo cambiar de asesoría si encuentro una mejor valorada?",
+      respuesta:
+        "Sí. En nuestra plataforma puedes consultar otras gestorías activas, ver su valoración y contactar directamente con ellas si lo deseas."
+    },
+    {
+      pregunta: "¿Puedo hacer una auditoría sin que mi asesoría lo sepa?",
+      respuesta:
+        "Sí. El proceso puede mantenerse completamente confidencial si así lo decides. Solo se informará a tu asesoría si das tu consentimiento."
+    }
   ];
 
   const faqs = perfil === "gestoria" ? faqsGestoria : perfil === "cliente" ? faqsCliente : [];
