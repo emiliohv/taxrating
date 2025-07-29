@@ -4,14 +4,15 @@ import Home from "./Home";
 import Admin from "./Admin";
 import Formulario from "./Formulario";
 import Faqs from "./Faqs";
-import Navbar from "./components/Navbar"; // Ajusta si fuera necesario
+import Navbar from "./components/Navbar";
+
 
 const App = () => {
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://www.chatbase.co/embed.min.js";
     script.id = "chatbase-script";
-    script.setAttribute("chatbotId", "5MOIiTyE40phPFDVMb07R"); // 🔁 Sustituye por el tuyo
+    script.setAttribute("chatbotId", "5MOIiTyE40phPFDVMb07R"); // 🔁 Sustituye por el tuyo 
     script.setAttribute("domain", "www.chatbase.co");
     script.defer = true;
     document.body.appendChild(script);
