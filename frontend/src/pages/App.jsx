@@ -13,7 +13,7 @@ const App = () => {
   }, []);
 
   return <h1>Prueba useEffect</h1>;
-
+"""
   return (
     <Router>
       <Navbar />
@@ -24,7 +24,7 @@ const App = () => {
         <Route path="/admin" element={<Admin />} />
       </Routes>
     </Router>
-  );
+  );"""
 };
 
 export default App;
