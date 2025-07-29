@@ -12,19 +12,17 @@ const App = () => {
     console.log("useEffect está funcionando correctamente");
   }, []);
 
-  return <h1>Prueba useEffect</h1>;
-
-  //return (
-    //<Router>
-     // <Navbar />
-    //  <Routes>
-     //   <Route path="/" element={<Home />} />
-    //    <Route path="/formulario" element={<Formulario />} />
-     //   <Route path="/faqs" element={<Faqs />} />
-    //    <Route path="/admin" element={<Admin />} />
-     // </Routes>
-   // </Router>
-  //);
+  return (
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/formulario" element={<Formulario />} />
+        <Route path="/faqs" element={<Faqs />} />
+        <Route path="/admin" element={<Admin />} />
+      </Routes>
+    </Router>
+  );
 };
 
 export default App;
