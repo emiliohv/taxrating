@@ -4,10 +4,7 @@ import Home from "./Home";
 import Admin from "./Admin";
 import Formulario from "./Formulario";
 import Faqs from "./Faqs";
-
-
-//import AdminLogin from "./AdminLogin"; <Route path="/admin-login" element={<AdminLogin />} />
-import Navbar from "../components/Navbar";
+import Navbar from "./components/Navbar";
 
 const App = () => {
   return (
