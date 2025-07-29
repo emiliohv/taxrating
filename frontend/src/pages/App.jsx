@@ -8,7 +8,7 @@ import Navbar from "./components/Navbar";
 
 
 const App = () => {
-  uuseEffect(() => {
+  useEffect(() => {
     console.log("useEffect está funcionando correctamente");
   }, []);
 
