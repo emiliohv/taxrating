@@ -12,7 +12,7 @@ const Faqs = () => {
     {
       pregunta: "¿Qué ventajas tiene para mi asesoría?",
       respuesta:
-        "Mejora de reputación profesional, atracción de nuevos clientes, visibilidad online, posibilidad de ingresos extra y acceso a informes de calidad desde el punto de vista fiscal."
+        "Mejora de reputación profesional, atracción de nuevos clientes, visibilidad online, posibilidad de ingresos extra y acceso a informes de calidad desde el punto de vista fiscal. También compartirá con nosotros la responsabilidad de las eventuales contingencias que pudieran surgir en el ejercicio de revisión."
     },
     {
       pregunta: "¿Quién realiza las auditorías fiscales?",
@@ -70,7 +70,7 @@ const Faqs = () => {
     {
       pregunta: "¿Qué utilidad tiene para mí?",
       respuesta:
-        "Saber si estás pagando correctamente tus impuestos, si podrías haber optimizado tu situación fiscal y detectar errores o riesgos antes de que lo haga Hacienda."
+        "Saber si estás pagando correctamente tus impuestos, si podrías haber optimizado tu situación fiscal y detectar errores o riesgos antes de que lo haga Hacienda. Además, obtener una segunda opinión contribuye a tu tranquilidad y a despejar las dudas que puedas tener sobre el trabajo de tu gestor/asesor."
     },
     {
       pregunta: "¿Qué documentación tengo que aportar?",
