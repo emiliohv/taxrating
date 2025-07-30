@@ -8,47 +8,18 @@ import Navbar from "./components/Navbar";
 
 const App = () => {
   useEffect(() => {
-    console.log("🧠 Chatbase script is being injected...");
-    (function () {
-      if (
-        !window.chatbase ||
-        window.chatbase("getState") !== "initialized"
-      ) {
-        window.chatbase = (...args) => {
-          if (!window.chatbase.q) {
-            window.chatbase.q = [];
-          }
-          window.chatbase.q.push(args);
-        };
-        window.chatbase = new Proxy(window.chatbase, {
-          get(target, prop) {
-            if (prop === "q") return target.q;
-            return (...args) => target(prop, ...args);
-          }
-        });
-      }
-
-      const onLoad = function () {
-        const script = document.createElement("script");
-        script.src = "https://www.chatbase.co/embed.min.js";
-        script.setAttribute("chatbotId", "5MOIiTyE40phPFDVMb07R"); // Tu ID real
-        script.setAttribute("domain", "www.chatbase.co");
-        document.body.appendChild(script);
-      };
-
-      if (document.readyState === "complete") {
-        onLoad();
-      } else {
-        window.addEventListener("load", onLoad);
-      }
-    })();
-    script.onload = () => {
-      console.log("✅ Chatbase script loaded successfully");
-    };
+    console.log("🧠 Inyectando script de Chatbase...");
   
-    script.onerror = () => {
-      console.error("❌ Failed to load Chatbase script");
-    };
+    const script = document.createElement("script");
+    script.src = "https://www.chatbase.co/embed.min.js";
+    script.defer = true;
+  
+    // 👇 MUY IMPORTANTE
+    script.setAttribute("chatbotId", "5MOIiTyE40phPFDVMb07R");
+    script.setAttribute("domain", "www.chatbase.co");
+  
+    script.onload = () => console.log("✅ Chatbase script cargado correctamente");
+    script.onerror = () => console.error("❌ Error cargando script de Chatbase");
   
     document.body.appendChild(script);
   }, []);
