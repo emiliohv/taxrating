@@ -7,6 +7,7 @@ import Faqs from "./Faqs";
 import Navbar from "../components/Navbar";
 
 const App = () => {
+  alert("App.jsx se está ejecutando");
   useEffect(() => {
     console.log("🧠 Inyectando script de Chatbase...");
 
