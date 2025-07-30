@@ -9,7 +9,7 @@ import Navbar from "../components/Navbar";
 const App = () => {
   
   useEffect(() => {
-    console.log("🧠 Inyectando script de Chatbase...");
+    //console.log("🧠 Inyectando script de Chatbase...");
 
     const script = document.createElement("script");
     script.src = "https://www.chatbase.co/embed.min.js";
