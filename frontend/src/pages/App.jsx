@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar";
 
 const App = () => {
   useEffect(() => {
+    console.log("🧠 Chatbase script is being injected...");
     (function () {
       if (
         !window.chatbase ||
@@ -41,6 +42,15 @@ const App = () => {
         window.addEventListener("load", onLoad);
       }
     })();
+    script.onload = () => {
+      console.log("✅ Chatbase script loaded successfully");
+    };
+  
+    script.onerror = () => {
+      console.error("❌ Failed to load Chatbase script");
+    };
+  
+    document.body.appendChild(script);
   }, []);
 
   return (
