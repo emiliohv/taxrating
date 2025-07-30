@@ -6,6 +6,8 @@ import Formulario from "./Formulario";
 import Faqs from "./Faqs";
 import Navbar from "./components/Navbar";
 
+console.log("✅ App.jsx se está ejecutando");
+
 const App = () => {
   useEffect(() => {
     console.log("🧠 Inyectando script de Chatbase...");
