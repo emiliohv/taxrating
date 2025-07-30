@@ -7,7 +7,7 @@ import Faqs from "./Faqs";
 import Navbar from "../components/Navbar";
 
 const App = () => {
-  alert("App.jsx se está ejecutando");
+  
   useEffect(() => {
     console.log("🧠 Inyectando script de Chatbase...");
 
@@ -17,8 +17,8 @@ const App = () => {
     script.setAttribute("domain", "www.chatbase.co");
     script.defer = true;
 
-    script.onload = () => console.log("✅ Chatbase script cargado correctamente");
-    script.onerror = () => console.error("❌ Error cargando script de Chatbase");
+    //script.onload = () => console.log("✅ Chatbase script cargado correctamente");
+    //script.onerror = () => console.error("❌ Error cargando script de Chatbase");
 
     document.body.appendChild(script);
   }, []);
