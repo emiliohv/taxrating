@@ -30,7 +30,7 @@ const App = () => {
       const onLoad = function () {
         const script = document.createElement("script");
         script.src = "https://www.chatbase.co/embed.min.js";
-        script.id = "5MOIiTyE40phPFDVMb07R"; // Tu ID real
+        script.setAttribute("chatbotId", "5MOIiTyE40phPFDVMb07R"); // Tu ID real
         script.setAttribute("domain", "www.chatbase.co");
         document.body.appendChild(script);
       };
