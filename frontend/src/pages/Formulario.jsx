@@ -93,7 +93,7 @@ const Formulario = () => {
   }
 
   return (<>
-  <div className="p-4"></div>
+  <div className="p-3"></div>
     <div className="text-center mb-6">
       <h1 className="text-3xl font-bold text-blue-700 mb-4">TaxRating</h1>
       <p className="text-gray-600 text-lg">
