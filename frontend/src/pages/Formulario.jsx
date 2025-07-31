@@ -92,85 +92,90 @@ const Formulario = () => {
     return <p className="text-center text-green-600 text-lg mt-6">Gestoría enviada con éxito.</p>;
   }
 
-  return (
-    <div className="max-w-xl mx-auto mt-6 bg-white p-6 rounded shadow">
-      <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-blue-700 mb-4">TaxRating</h1>
-          <p className="text-gray-600 text-lg">Valoraciones objetivas de gestorías y asesorías fiscales, realizadas por empleados de la Agencia Tributaria en excedencia</p>
-        </div>
-      <h2 className="text-2xl font-bold mb-4 text-center">Alta nueva asesoría</h2>
-              {error && (
-          <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded text-sm text-center mb-4">
-            {error}
-          </div>
-        )}
-
-        {enviado && (
-          <div className="bg-green-100 border border-green-300 text-green-700 px-4 py-2 rounded text-sm text-center mb-4">
-            Gestoría enviada con éxito.
-          </div>
-        )}
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <label>
-          NIF <span className="text-red-600">*</span>
-          <input type="text" name="nif" value={form.nif} onChange={handleChange} className="border p-2 rounded w-full" />
-        </label>
-        <label>
-          Nombre <span className="text-red-600">*</span>
-          <input type="text" name="name" value={form.name} onChange={handleChange} className="border p-2 rounded w-full" />
-        </label>
-        <label>
-          Provincia <span className="text-red-600">*</span>
-          <select
-            name="province"
-            value={form.province}
-            onChange={handleChange}
-            className="border p-2 rounded w-full"
-            required
-          >
-            <option value="">Selecciona una provincia</option>
-            {[
-              "Álava", "Albacete", "Alicante", "Almería", "Asturias", "Ávila", "Badajoz", "Barcelona", "Burgos",
-              "Cáceres", "Cádiz", "Cantabria", "Castellón", "Ciudad Real", "Córdoba", "Cuenca", "Girona", "Granada",
-              "Guadalajara", "Guipúzcoa", "Huelva", "Huesca", "Illes Balears", "Jaén", "La Coruña", "La Rioja", "Las Palmas",
-              "León", "Lleida", "Lugo", "Madrid", "Málaga", "Murcia", "Navarra", "Ourense", "Palencia", "Pontevedra",
-              "Salamanca", "Santa Cruz de Tenerife", "Segovia", "Sevilla", "Soria", "Tarragona", "Teruel", "Toledo",
-              "Valencia", "Valladolid", "Vizcaya", "Zamora", "Zaragoza", "Ceuta", "Melilla"
-            ].map((provincia) => (
-              <option key={provincia} value={provincia}>{provincia}</option>
-            ))}
-          </select>
-        </label>
-
-        <label>
-          Email <span className="text-red-600">*</span>
-          <input type="email" name="email" value={form.email} onChange={handleChange} className="border p-2 rounded w-full" />
-        </label>
-        <label>
-          Imagen
-          <input type="text" name="image" value={form.image} onChange={handleChange} className="border p-2 rounded w-full" />
-        </label>
-        <label>
-          Página Web
-          <input type="text" name="website" value={form.website} onChange={handleChange} className="border p-2 rounded w-full" />
-        </label>
-        <label>
-          Ubicación (Google Maps)
-          <input type="text" name="location" value={form.location} onChange={handleChange} className="border p-2 rounded w-full" />
-        </label>    
-        <label>
-          Código Recomendación/Promoción 
-          <input type="text" name="promocode" value={form.promocode} onChange={handleChange} className="border p-2 rounded w-full" />
-        </label>
-          <ReCAPTCHA
-          sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
-          onChange={(token) => setRecaptchaToken(token)}
-          />
-
-        <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Enviar</button>
-      </form>
+  return (<>
+    <div className="text-center mb-6">
+      <h1 className="text-3xl font-bold text-blue-700 mb-4">TaxRating</h1>
+      <p className="text-gray-600 text-lg">
+        Valoraciones objetivas de gestorías y asesorías fiscales, realizadas por empleados de la Agencia Tributaria en excedencia
+      </p>
     </div>
+    
+        <div className="max-w-xl mx-auto mt-6 bg-white p-6 rounded shadow">
+        
+          <h2 className="text-2xl font-bold mb-4 text-center">Alta nueva asesoría</h2>
+                {error && (
+            <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded text-sm text-center mb-4">
+              {error}
+            </div>
+          )}
+
+          {enviado && (
+            <div className="bg-green-100 border border-green-300 text-green-700 px-4 py-2 rounded text-sm text-center mb-4">
+              Gestoría enviada con éxito.
+            </div>
+          )}
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <label>
+            NIF <span className="text-red-600">*</span>
+            <input type="text" name="nif" value={form.nif} onChange={handleChange} className="border p-2 rounded w-full" />
+          </label>
+          <label>
+            Nombre <span className="text-red-600">*</span>
+            <input type="text" name="name" value={form.name} onChange={handleChange} className="border p-2 rounded w-full" />
+          </label>
+          <label>
+            Provincia <span className="text-red-600">*</span>
+            <select
+              name="province"
+              value={form.province}
+              onChange={handleChange}
+              className="border p-2 rounded w-full"
+              required
+            >
+              <option value="">Selecciona una provincia</option>
+              {[
+                "Álava", "Albacete", "Alicante", "Almería", "Asturias", "Ávila", "Badajoz", "Barcelona", "Burgos",
+                "Cáceres", "Cádiz", "Cantabria", "Castellón", "Ciudad Real", "Córdoba", "Cuenca", "Girona", "Granada",
+                "Guadalajara", "Guipúzcoa", "Huelva", "Huesca", "Illes Balears", "Jaén", "La Coruña", "La Rioja", "Las Palmas",
+                "León", "Lleida", "Lugo", "Madrid", "Málaga", "Murcia", "Navarra", "Ourense", "Palencia", "Pontevedra",
+                "Salamanca", "Santa Cruz de Tenerife", "Segovia", "Sevilla", "Soria", "Tarragona", "Teruel", "Toledo",
+                "Valencia", "Valladolid", "Vizcaya", "Zamora", "Zaragoza", "Ceuta", "Melilla"
+              ].map((provincia) => (
+                <option key={provincia} value={provincia}>{provincia}</option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Email <span className="text-red-600">*</span>
+            <input type="email" name="email" value={form.email} onChange={handleChange} className="border p-2 rounded w-full" />
+          </label>
+          <label>
+            Imagen
+            <input type="text" name="image" value={form.image} onChange={handleChange} className="border p-2 rounded w-full" />
+          </label>
+          <label>
+            Página Web
+            <input type="text" name="website" value={form.website} onChange={handleChange} className="border p-2 rounded w-full" />
+          </label>
+          <label>
+            Ubicación (Google Maps)
+            <input type="text" name="location" value={form.location} onChange={handleChange} className="border p-2 rounded w-full" />
+          </label>    
+          <label>
+            Código Recomendación/Promoción 
+            <input type="text" name="promocode" value={form.promocode} onChange={handleChange} className="border p-2 rounded w-full" />
+          </label>
+            <ReCAPTCHA
+            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+            onChange={(token) => setRecaptchaToken(token)}
+            />
+
+          <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Enviar</button>
+        </form>
+      </div>
+      </>
   );
 };
 
