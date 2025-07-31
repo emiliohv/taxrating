@@ -94,6 +94,10 @@ const Formulario = () => {
 
   return (
     <div className="max-w-xl mx-auto mt-6 bg-white p-6 rounded shadow">
+      <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold text-blue-700 mb-4">TaxRating</h1>
+          <p className="text-gray-600 text-lg">Valoraciones objetivas de gestorías y asesorías fiscales, realizadas por empleados de la Agencia Tributaria en excedencia</p>
+        </div>
       <h2 className="text-2xl font-bold mb-4 text-center">Alta nueva asesoría</h2>
               {error && (
           <div className="bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded text-sm text-center mb-4">
