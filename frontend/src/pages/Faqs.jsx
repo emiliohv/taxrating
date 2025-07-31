@@ -113,8 +113,7 @@ const Faqs = () => {
 
   return (
     <>
-     <div className="p-6"></div>
-    <div className="text-center mb-6">
+      <div className="text-center mb-6">
       <h1 className="text-3xl font-bold text-blue-700 mb-4">TaxRating</h1>
       <p className="text-gray-600 text-lg">
         Valoraciones objetivas de gestorías y asesorías fiscales, realizadas por empleados de la Agencia Tributaria en excedencia
