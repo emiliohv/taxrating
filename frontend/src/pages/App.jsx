@@ -8,12 +8,15 @@ import Navbar from "../components/Navbar";
 
 const App = () => {
   
+  const CHATBASE_ID = import.meta.env.VITE_CHATBASE_ID;
+
+
   useEffect(() => {
     //console.log("🧠 Inyectando script de Chatbase...");
 
     const script = document.createElement("script");
     script.src = "https://www.chatbase.co/embed.min.js";
-    script.setAttribute("chatbotId", "5MOIiTyE40phPFDVMb07R");
+    script.setAttribute("chatbotId", CHATBASE_ID);
     script.setAttribute("domain", "www.chatbase.co");
     script.defer = true;
 
