@@ -112,6 +112,14 @@ const Faqs = () => {
   const faqs = perfil === "gestoria" ? faqsGestoria : perfil === "cliente" ? faqsCliente : [];
 
   return (
+    <>
+     <div className="p-6"></div>
+    <div className="text-center mb-6">
+      <h1 className="text-3xl font-bold text-blue-700 mb-4">TaxRating</h1>
+      <p className="text-gray-600 text-lg">
+        Valoraciones objetivas de gestorías y asesorías fiscales, realizadas por empleados de la Agencia Tributaria en excedencia
+      </p>
+    </div>
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-4 text-center">Preguntas Frecuentes</h1>
 
@@ -145,6 +153,7 @@ const Faqs = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 
