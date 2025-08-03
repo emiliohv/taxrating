@@ -131,7 +131,7 @@ const Faqs = () => {
             perfil === "gestoria" ? "bg-blue-600 text-white" : "bg-gray-200"
           }`}
         >
-          Soy una gestoría
+          Soy asesoría fiscal/gestoría
         </button>
         <button
           onClick={() => setPerfil("cliente")}
@@ -139,7 +139,7 @@ const Faqs = () => {
             perfil === "cliente" ? "bg-blue-600 text-white" : "bg-gray-200"
           }`}
         >
-          Soy cliente
+          Soy cliente de asesoría
         </button>
       </div>
 
