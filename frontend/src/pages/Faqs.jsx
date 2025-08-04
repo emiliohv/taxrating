@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const Faqs = () => {
-  const [perfil, setPerfil] = useState(""); // "" | "gestoria" | "cliente"
+  const [perfil, setPerfil] = useState(""); // "" | "gestoria asesoría fiscal" | "cliente"
 
   const faqsGestoria = [
     {
