@@ -21,7 +21,7 @@ const App = () => {
     script.defer = true;
 
     //script.onload = () => console.log("✅ Chatbase script cargado correctamente");
-    //script.onerror = () => console.error("❌ Error cargando script Chatbase");
+    //script.onerror = () => console.error("❌ Error cargando  script Chatbase");
 
     document.body.appendChild(script);
   }, []);
