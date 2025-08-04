@@ -14,5 +14,8 @@
         "source": "/(.*)",
         "destination": "/frontend/dist/index.html"
       }
+    ],
+    "routes": [
+      { "handle": "filesystem" }
     ]
   }
