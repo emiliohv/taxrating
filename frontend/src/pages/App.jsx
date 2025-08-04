@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router-dom";
 import Home from "./Home";
 import Admin from "./Admin";
 import Formulario from "./Formulario";
@@ -27,7 +27,7 @@ const App = () => {
   }, []);
 
   return (
-    <Router>
+    <BrowserRouter>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -35,7 +35,7 @@ const App = () => {
         <Route path="/faqs" element={<Faqs />} />
         <Route path="/admin" element={<Admin />} />
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 };
 
