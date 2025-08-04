@@ -12,7 +12,7 @@
     "rewrites": [
       {
         "source": "/(.*)",
-        "destination": "/frontend/dist/index.h"
+        "destination": "/frontend/dist/index.html"
       }
     ],
     "routes": [
