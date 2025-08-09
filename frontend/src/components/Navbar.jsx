@@ -7,7 +7,7 @@ const Navbar = () => {
       {/* Fondo con patrón (overlay) */}
       <div
         className="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none"
-        style={{ backgroundImage: "url('/fondo-financiero.jpg')" }} // Asegúrate del nombre/ubicación
+        style={{ backgroundImage: "url('public/fondo-financiero.jpg')" }} // Asegúrate del nombre/ubicación
       />
 
       {/* Contenido */}
