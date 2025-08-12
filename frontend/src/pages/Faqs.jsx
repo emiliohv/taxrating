@@ -126,15 +126,21 @@ const Faqs = () => {
 
       <div className="flex justify-center gap-4 mb-6">
         <button
-          onClick={() => setPerfil("gestoria")}
-          className={`px-4 py-2 rounded ${
-            perfil === "gestoria" ? "bg-blue-600 text-white" : "bg-gray-200"
-          }`}
-        >
-          Asesorías fiscales/gestorías
-        </button>
+            onClick={() => setPerfil("gestoria")}
+            style={{
+              backgroundColor: perfil === "gestoria" ? "#002663" : "",
+              color: perfil === "gestoria" ? "white" : ""
+            }}
+            className={`px-4 py-2 rounded ${perfil !== "gestoria" ? "bg-gray-200" : ""}`}
+          >
+            Asesorías fiscales/gestorías
+          </button>
         <button
-          onClick={() => setPerfil("cliente")}
+          onClick={() => setPerfil("cliente")}          
+            style={{
+              backgroundColor: perfil === "cliente" ? "#002663" : "",
+              color: perfil === "cliente" ? "white" : ""
+            }} 
           className={`px-4 py-2 rounded ${
             perfil === "cliente" ? "bg-blue-600 text-white" : "bg-gray-200"
           }`}
