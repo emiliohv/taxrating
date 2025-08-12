@@ -183,9 +183,9 @@ const Admin = () => {
             onChange={(e) => setPassword(e.target.value)}
             className="border p-2 rounded"
           />
-          <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-            Iniciar sesión
-          </button>
+          <button type="submit" style={{backgroundColor: "#002663",
+                color: "white",}} className="py-2 rounded hover:opacity-90"
+            >Iniciar sesión</button>
         </form>
       </div>
     );
