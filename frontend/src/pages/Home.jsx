@@ -75,11 +75,13 @@ const Home = () => {
           <div className="flex-1 min-w-[200px] text-center">
             <label className="block mb-1 invisible">.</label>
             <button
-              className="bg-blue-500 text-white px-4 py-2 rounded"
-              onClick={() => setMostrarFiltros(!mostrarFiltros)}
-            >
-              {mostrarFiltros ? "Ocultar filtros" : "Mostrar filtros"}
-            </button>
+                style={{
+                  backgroundColor: "#002663",
+                  color: "white",
+                }}
+                className="px-4 py-2 rounded hover:opacity-90" onClick={() => setMostrarFiltros(!mostrarFiltros)}
+                >{mostrarFiltros ? "Ocultar filtros" : "Mostrar filtros"}
+              </button>
           </div>
           <div className="flex-1 min-w-[200px] text-right">
             <label className="block mb-1 font-medium">Ordenar por</label>
