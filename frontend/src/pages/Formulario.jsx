@@ -89,7 +89,7 @@ const Formulario = () => {
   }
 
   if (enviado) {
-    return <p className="text-center text-green-600 text-lg mt-6">Gestoría enviada con éxito.</p>;
+    return <p className="text-center text-green-600 text-lg mt-6">Asesoría enviada con éxito.</p>;
   }
 
   return (<>
@@ -112,7 +112,7 @@ const Formulario = () => {
 
           {enviado && (
             <div className="bg-green-100 border border-green-300 text-green-700 px-4 py-2 rounded text-sm text-center mb-4">
-              Gestoría enviada con éxito.
+              Asesoría enviada con éxito.
             </div>
           )}
 
