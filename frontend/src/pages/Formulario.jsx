@@ -173,7 +173,12 @@ const Formulario = () => {
             onChange={(token) => setRecaptchaToken(token)}
             />
 
-          <button type="submit" className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Enviar</button>
+          <button
+                type="submit"
+                style={{
+                  backgroundColor: "#002663",
+                  color: "white",
+                }}className="py-2 rounded hover:opacity-90">Enviar</button>
         </form>
       </div>
       </>
