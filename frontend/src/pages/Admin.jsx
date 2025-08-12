@@ -165,7 +165,7 @@ const Admin = () => {
 
   if (!token) {
     return (
-      <div className="max-w-xl mx-auto mt-6 bg-white p-6 rounded-lg shadow-lg border-2 border-[#002663]">
+      <div className="max-w-xl mx-auto mt-6 bg-white p-6 rounded shadow border border-gray-300">
         <h2 className="text-2xl font-bold mb-4 text-center">Login Administrador</h2>
         {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
