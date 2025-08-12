@@ -116,7 +116,7 @@ const Faqs = () => {
      
   <div className="p-3"></div>
     <div className="text-center mb-6">
-      <h1 className="text-3xl font-bold text-blue-700 mb-4">TaxRating</h1>
+      <h1 className="text-3xl font-bold mb-4" style={{ color: "#002663" }}>TaxRating</h1>
       <p className="text-gray-600 text-lg">
         Valoraciones objetivas de gestorías y asesorías fiscales, realizadas por empleados de la Agencia Tributaria en excedencia
       </p>
