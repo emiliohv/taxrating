@@ -101,7 +101,7 @@ const Formulario = () => {
       </p>
     </div>
     
-        <div className="max-w-xl mx-auto mt-6 bg-white p-6 rounded shadow">
+        <div className="max-w-xl mx-auto mt-6 bg-white p-6 rounded shadow border border-gray-300">
         
           <h2 className="text-2xl font-bold mb-4 text-center">Alta nueva asesoría</h2>
                 {error && (
