@@ -35,7 +35,7 @@ function App() {
         transform-origin: initial !important;
       }
       iframe[src*="chatbase"][data-chatbase="bubble"] {
-        transform: scale(1.7) !important;
+        transform: scale(1.2) !important;
         transform-origin: bottom right !important;
         right: 16px !important;
         bottom: 16px !important;
