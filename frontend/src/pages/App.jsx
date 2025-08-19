@@ -6,8 +6,6 @@ import Formulario from "./Formulario";
 import Faqs from "./Faqs";
 import Navbar from "../components/Navbar";
 
-import { useEffect } from "react";
-
 const CHATBASE_ID = import.meta.env.VITE_CHATBASE_ID;
 
 function App() {
