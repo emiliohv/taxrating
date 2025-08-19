@@ -31,8 +31,8 @@ function ChatLauncher() {
       onClick={handleClick}
       className="fixed z-[2147483646] bottom-4 right-4 rounded-full shadow-lg transition-transform hover:scale-105 focus:outline-none"
       style={{
-        width: 92,       // ⬅️ tamaño del globo (ajusta)
-        height: 92,      // ⬅️ tamaño del globo (ajusta)
+        width: 84,       // ⬅️ tamaño del globo (ajusta)
+        height: 84,      // ⬅️ tamaño del globo (ajusta)
         background: "#ffffff",
         border: "2px solid #E5E7EB",
         display: "flex",
@@ -43,7 +43,7 @@ function ChatLauncher() {
       <img
         src="https://backend.chatbase.co/storage/v1/object/public/chat-icons/cdc61a71-1b81-4ae1-83bd-44689198b57b/VTEhXbJb3iE8D7aHM8AV4.webp"
         alt="TaxRating"
-        style={{ width: 90, height: 90, borderRadius: "50%" }}
+        style={{ width: 82, height: 82, borderRadius: "50%" }}
       />
     </button>
   );
