@@ -10,7 +10,7 @@ const CHATBASE_ID = import.meta.env.VITE_CHATBASE_ID;
 
 function App() {
   useEffect(() => {
-    // 1) Inyecta el script de Chatbase una sola vez
+    // Inyecta Chatbase (si aún no está)
     if (!document.querySelector('script[src*="chatbase.co/embed.min.js"]')) {
       const script = document.createElement("script");
       script.src = "https://www.chatbase.co/embed.min.js";
@@ -20,74 +20,54 @@ function App() {
       document.body.appendChild(script);
     }
 
-    // 2) Inyecta estilos fuertes para escalar el bubble (responsive)
-    if (!document.getElementById("chatbase-bubble-style")) {
-      const style = document.createElement("style");
-      style.id = "chatbase-bubble-style";
-      style.textContent = `
-        /* Móvil por defecto */
-        iframe[src*="chatbase"] {
-          transform: scale(1.12) !important;
-          transform-origin: bottom right !important;
-          right: 12px !important;
-          bottom: 12px !important;
-        }
-        @media (min-width: 640px) {
-          iframe[src*="chatbase"] {
-            transform: scale(1.22) !important;
-            right: 14px !important;
-            bottom: 14px !important;
-          }
-        }
-        @media (min-width: 768px) {
-          iframe[src*="chatbase"] {
-            transform: scale(1.32) !important;
-            right: 16px !important;
-            bottom: 16px !important;
-          }
-        }
-        @media (min-width: 1024px) {
-          iframe[src*="chatbase"] {
-            transform: scale(1.42) !important;
-            right: 18px !important;
-            bottom: 18px !important;
-          }
-        }
-        @media (min-width: 1280px) {
-          iframe[src*="chatbase"] {
-            transform: scale(1.50) !important;
-            right: 20px !important;
-            bottom: 20px !important;
-          }
-        }
-      `;
-      document.head.appendChild(style);
-    }
+    // Elimina estilos antiguos que pudieran estar escalando la ventana
+    const oldStyle = document.getElementById("chatbase-bubble-style");
+    if (oldStyle) oldStyle.remove();
 
-    // 3) Asegura aplicación cuando el iframe aparezca (sin TypeScript)
-    const applyInline = () => {
-      const bubble = document.querySelector('iframe[src*="chatbase"]');
-      if (bubble && bubble instanceof HTMLElement) {
-        // Por si hiciera falta reforzar inline:
-        bubble.style.transform = "scale(1.12)";
-        bubble.style.transformOrigin = "bottom right";
-        bubble.style.right = "12px";
-        bubble.style.bottom = "12px";
-        return true;
-      }
-      return false;
+    // Función que escala SOLO si es el globo (launcher)
+    const SCALE = 1.4;          // <- ajusta el tamaño del botón aquí
+    const PAD = 16;             // separación a las esquinas
+
+    const applyOnlyOnLauncher = () => {
+      const iframes = Array.from(document.querySelectorAll('iframe[src*="chatbase"]'));
+      iframes.forEach((el) => {
+        if (!(el instanceof HTMLElement)) return;
+        const r = el.getBoundingClientRect();
+        const isLauncher = r.width > 0 && r.height > 0 && r.width <= 90 && r.height <= 90;
+        if (isLauncher) {
+          // Escala solo el botón
+          el.style.transform = `scale(${SCALE})`;
+          el.style.transformOrigin = "bottom right";
+          el.style.right = `${PAD}px`;
+          el.style.bottom = `${PAD}px`;
+        } else {
+          // Restablece cuando es la ventana abierta
+          el.style.transform = "";
+          el.style.transformOrigin = "";
+          // No tocamos right/bottom para no interferir con el layout del popup
+        }
+      });
     };
 
-    if (!applyInline()) {
-      const obs = new MutationObserver(() => {
-        if (applyInline()) obs.disconnect();
-      });
-      obs.observe(document.documentElement, { childList: true, subtree: true });
-      return () => obs.disconnect();
-    }
+    // Observa cambios en el DOM (el iframe aparece tarde y cambia de tamaño)
+    const obs = new MutationObserver(applyOnlyOnLauncher);
+    obs.observe(document.documentElement, { childList: true, subtree: true });
+
+    // Reaplica en eventos típicos
+    window.addEventListener("resize", applyOnlyOnLauncher);
+    const id = window.setInterval(applyOnlyOnLauncher, 400); // pequeño “poll” por si el tamaño cambia sin mutación
+
+    // Primer intento inmediato
+    applyOnlyOnLauncher();
+
+    return () => {
+      obs.disconnect();
+      window.removeEventListener("resize", applyOnlyOnLauncher);
+      window.clearInterval(id);
+    };
   }, []);
 
-  
+    
   return (
     <BrowserRouter>
       <Navbar />
