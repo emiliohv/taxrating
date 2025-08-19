@@ -1,15 +1,50 @@
+/* Base Tailwind (igual que antes) */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Arial', sans-serif;
+body { font-family: 'Arial', sans-serif; }
+
+/* 👉 Escalar SOLO el botón (launcher) de Chatbase */
+iframe[src*="chatbase.co"] {
+  transform: scale(1.12) !important;           /* móviles */
+  transform-origin: bottom right !important;
+  right: 12px !important;
+  bottom: 12px !important;
 }
 
-/* 👉 Escalar SOLO el botón flotante (icono redondo) de Chatbase */
-iframe[src*="chatbase.co"] {
-  transform: scale(1.5) !important;          /* aumenta el tamaño */
-  transform-origin: bottom right !important; /* mantiene posición en la esquina */
-  right: 16px !important; 
-  bottom: 16px !important;
+/* ≥ 640px (sm) */
+@media (min-width: 640px) {
+  iframe[src*="chatbase.co"] {
+    transform: scale(1.22) !important;
+    right: 14px !important;
+    bottom: 14px !important;
+  }
+}
+
+/* ≥ 768px (md) */
+@media (min-width: 768px) {
+  iframe[src*="chatbase.co"] {
+    transform: scale(1.32) !important;
+    right: 16px !important;
+    bottom: 16px !important;
+  }
+}
+
+/* ≥ 1024px (lg) */
+@media (min-width: 1024px) {
+  iframe[src*="chatbase.co"] {
+    transform: scale(1.42) !important;
+    right: 18px !important;
+    bottom: 18px !important;
+  }
+}
+
+/* ≥ 1280px (xl) */
+@media (min-width: 1280px) {
+  iframe[src*="chatbase.co"] {
+    transform: scale(1.5) !important;
+    right: 20px !important;
+    bottom: 20px !important;
+  }
 }
