@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, BrowserRouter } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./Home";
 import Admin from "./Admin";
 import Formulario from "./Formulario";
@@ -10,7 +10,7 @@ const CHATBASE_ID = import.meta.env.VITE_CHATBASE_ID;
 
 function App() {
   useEffect(() => {
-    // Inyecta Chatbase (si aún no está)
+    // 1) Inyecta Chatbase solo una vez
     if (!document.querySelector('script[src*="chatbase.co/embed.min.js"]')) {
       const script = document.createElement("script");
       script.src = "https://www.chatbase.co/embed.min.js";
@@ -20,54 +20,58 @@ function App() {
       document.body.appendChild(script);
     }
 
-    // Elimina estilos antiguos que pudieran estar escalando la ventana
-    const oldStyle = document.getElementById("chatbase-bubble-style");
-    if (oldStyle) oldStyle.remove();
+    // 2) Elimina estilos antiguos que pudieran escalar la ventana
+    document.querySelectorAll('#chatbase-bubble-style, #chatbase-force-reset')
+      .forEach(n => n.remove());
 
-    // Función que escala SOLO si es el globo (launcher)
-    const SCALE = 1.4;          // <- ajusta el tamaño del botón aquí
-    const PAD = 16;             // separación a las esquinas
+    // 3) Inyecta estilos:
+    //    - Por defecto: SIN escala (restaura la ventana normal).
+    //    - Solo si el iframe está marcado como "bubble": se escala el botón.
+    const style = document.createElement("style");
+    style.id = "chatbase-force-reset";
+    style.textContent = `
+      iframe[src*="chatbase"] {
+        transform: none !important;
+        transform-origin: initial !important;
+      }
+      iframe[src*="chatbase"][data-chatbase="bubble"] {
+        transform: scale(1.4) !important;
+        transform-origin: bottom right !important;
+        right: 16px !important;
+        bottom: 16px !important;
+      }
+    `;
+    document.head.appendChild(style);
 
-    const applyOnlyOnLauncher = () => {
-      const iframes = Array.from(document.querySelectorAll('iframe[src*="chatbase"]'));
+    // 4) Marca cada iframe como "bubble" (botón) o "popup" (ventana) por su tamaño
+    const markBubbleOrPopup = () => {
+      const iframes = document.querySelectorAll('iframe[src*="chatbase"]');
       iframes.forEach((el) => {
         if (!(el instanceof HTMLElement)) return;
         const r = el.getBoundingClientRect();
-        const isLauncher = r.width > 0 && r.height > 0 && r.width <= 90 && r.height <= 90;
-        if (isLauncher) {
-          // Escala solo el botón
-          el.style.transform = `scale(${SCALE})`;
-          el.style.transformOrigin = "bottom right";
-          el.style.right = `${PAD}px`;
-          el.style.bottom = `${PAD}px`;
-        } else {
-          // Restablece cuando es la ventana abierta
-          el.style.transform = "";
-          el.style.transformOrigin = "";
-          // No tocamos right/bottom para no interferir con el layout del popup
-        }
+        // Umbral típico del launcher ~56-64px; usamos <= 90px para ir holgados
+        const isBubble = r.width > 0 && r.height > 0 && r.width <= 90 && r.height <= 90;
+        el.setAttribute("data-chatbase", isBubble ? "bubble" : "popup");
       });
     };
 
-    // Observa cambios en el DOM (el iframe aparece tarde y cambia de tamaño)
-    const obs = new MutationObserver(applyOnlyOnLauncher);
+    // Observa cambios (el iframe aparece/cambia tarde), y reevalúa periódicamente
+    const obs = new MutationObserver(markBubbleOrPopup);
     obs.observe(document.documentElement, { childList: true, subtree: true });
 
-    // Reaplica en eventos típicos
-    window.addEventListener("resize", applyOnlyOnLauncher);
-    const id = window.setInterval(applyOnlyOnLauncher, 400); // pequeño “poll” por si el tamaño cambia sin mutación
+    const intervalId = window.setInterval(markBubbleOrPopup, 400);
+    window.addEventListener("resize", markBubbleOrPopup);
 
-    // Primer intento inmediato
-    applyOnlyOnLauncher();
+    // Primer pase
+    markBubbleOrPopup();
 
     return () => {
       obs.disconnect();
-      window.removeEventListener("resize", applyOnlyOnLauncher);
-      window.clearInterval(id);
+      window.clearInterval(intervalId);
+      window.removeEventListener("resize", markBubbleOrPopup);
     };
   }, []);
 
-    
   return (
     <BrowserRouter>
       <Navbar />
@@ -78,8 +82,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
       </Routes>
     </BrowserRouter>
-    
   );
-};
+}
 
 export default App;
