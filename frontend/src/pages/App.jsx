@@ -45,7 +45,7 @@ function ChatLauncher() {
       <img
         src="https://backend.chatbase.co/storage/v1/object/public/chat-icons/cdc61a71-1b81-4ae1-83bd-44689198b57b/VTEhXbJb3iE8D7aHM8AV4.webp"
         alt="TaxRating"
-        style={{ width: 64, height: 64, borderRadius: "50%" }}
+        style={{ width: 82, height: 82, borderRadius: "50%" }}
       />
     </button>
   );
