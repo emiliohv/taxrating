@@ -180,8 +180,9 @@ const Formulario = () => {
                   color: "white",
                 }}className="py-2 rounded hover:opacity-90">Enviar</button>
         </form>
-        <div className="p-3"></div>
+        
       </div>
+      <div className="p-3"></div>
       </>
   );
 };
