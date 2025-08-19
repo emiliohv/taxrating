@@ -1,12 +1,9 @@
-/* Base Tailwind (igual que antes) */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Arial', sans-serif;
-}
+body { font-family: 'Arial', sans-serif; }
 
-/* No añadir aquí reglas para iframe[src*="chatbase"].
-   El escalado del botón se gestiona desde App.jsx
-   para no afectar a la ventana del chat. */
+/* No añadir reglas para iframe[src*="chatbase"] aquí.
+   El tamaño del botón lo controlamos con nuestro propio launcher
+   y dejamos la ventana del chat en su tamaño original. */

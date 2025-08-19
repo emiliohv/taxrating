@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./Home";
 import Admin from "./Admin";
@@ -7,6 +7,49 @@ import Faqs from "./Faqs";
 import Navbar from "../components/Navbar";
 
 const CHATBASE_ID = import.meta.env.VITE_CHATBASE_ID;
+
+// Botón propio (launcher)
+function ChatLauncher() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Abrir/cerrar usando la API pública de Chatbase
+  const handleClick = () => {
+    try {
+      if (!window.chatbase) return;
+      if (isOpen) {
+        window.chatbase.close?.();
+        setIsOpen(false);
+      } else {
+        window.chatbase.open?.();
+        setIsOpen(true);
+      }
+    } catch {}
+  };
+
+  return (
+    <button
+      aria-label="Abrir chat"
+      onClick={handleClick}
+      className="fixed z-50 bottom-4 right-4 rounded-full shadow-lg transition-transform hover:scale-105 focus:outline-none"
+      style={{
+        width: 84,        // ⬅️ cambia el tamaño del globo aquí
+        height: 84,       // ⬅️ idem
+        background: "#ffffff",
+        border: "2px solid #E5E7EB",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {/* Tu icono. Si prefieres, usa el .webp que pasaste */}
+      <img
+        src="https://backend.chatbase.co/storage/v1/object/public/chat-icons/cdc61a71-1b81-4ae1-83bd-44689198b57b/VTEhXbJb3iE8D7aHM8AV4.webp"
+        alt="TaxRating"
+        style={{ width: 64, height: 64, borderRadius: "50%" }}
+      />
+    </button>
+  );
+}
 
 function App() {
   useEffect(() => {
@@ -20,55 +63,35 @@ function App() {
       document.body.appendChild(script);
     }
 
-    // 2) Elimina estilos antiguos que pudieran escalar la ventana
-    document.querySelectorAll('#chatbase-bubble-style, #chatbase-force-reset')
-      .forEach(n => n.remove());
-
-    // 3) Inyecta estilos:
-    //    - Por defecto: SIN escala (restaura la ventana normal).
-    //    - Solo si el iframe está marcado como "bubble": se escala el botón.
-    const style = document.createElement("style");
-    style.id = "chatbase-force-reset";
-    style.textContent = `
-      iframe[src*="chatbase"] {
-        transform: none !important;
-        transform-origin: initial !important;
-      }
-      iframe[src*="chatbase"][data-chatbase="bubble"] {
-        transform: scale(2.5) !important;
-        transform-origin: bottom right !important;
-        right: 16px !important;
-        bottom: 16px !important;
-      }
-    `;
-    document.head.appendChild(style);
-
-    // 4) Marca cada iframe como "bubble" (botón) o "popup" (ventana) por su tamaño
-    const markBubbleOrPopup = () => {
+    // 2) Asegura que la ventana no se vea escalada (restaura transform)
+    //    y oculta el launcher nativo (para usar el nuestro).
+    const normalizeAndHideNative = () => {
       const iframes = document.querySelectorAll('iframe[src*="chatbase"]');
       iframes.forEach((el) => {
-        if (!(el instanceof HTMLElement)) return;
         const r = el.getBoundingClientRect();
-        // Umbral típico del launcher ~56-64px; usamos <= 90px para ir holgados
-        const isBubble = r.width > 0 && r.height > 0 && r.width <= 90 && r.height <= 90;
-        el.setAttribute("data-chatbase", isBubble ? "bubble" : "popup");
+        const isSmall = r.width > 0 && r.height > 0 && r.width <= 100 && r.height <= 100;
+        if (isSmall) {
+          // Oculta el launcher nativo
+          el.style.setProperty("display", "none", "important");
+        } else {
+          // Restablece transform en la ventana
+          el.style.setProperty("transform", "none", "important");
+          el.style.setProperty("transform-origin", "initial", "important");
+        }
       });
     };
 
-    // Observa cambios (el iframe aparece/cambia tarde), y reevalúa periódicamente
-    const obs = new MutationObserver(markBubbleOrPopup);
+    const obs = new MutationObserver(normalizeAndHideNative);
     obs.observe(document.documentElement, { childList: true, subtree: true });
 
-    const intervalId = window.setInterval(markBubbleOrPopup, 400);
-    window.addEventListener("resize", markBubbleOrPopup);
-
-    // Primer pase
-    markBubbleOrPopup();
+    const id = window.setInterval(normalizeAndHideNative, 600);
+    window.addEventListener("resize", normalizeAndHideNative);
+    normalizeAndHideNative();
 
     return () => {
       obs.disconnect();
-      window.clearInterval(intervalId);
-      window.removeEventListener("resize", markBubbleOrPopup);
+      window.clearInterval(id);
+      window.removeEventListener("resize", normalizeAndHideNative);
     };
   }, []);
 
@@ -81,6 +104,9 @@ function App() {
         <Route path="/faqs" element={<Faqs />} />
         <Route path="/admin" element={<Admin />} />
       </Routes>
+
+      {/* Nuestro botón grande y bonito */}
+      <ChatLauncher />
     </BrowserRouter>
   );
 }
