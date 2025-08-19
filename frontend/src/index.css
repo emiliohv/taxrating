@@ -6,3 +6,49 @@
 body {
   font-family: 'Arial', sans-serif;
 }
+/* Escalar el botón flotante (iframe) de Chatbase */
+/* Móvil por defecto */
+iframe[src*="chatbase.co"] {
+  transform: scale(1.12);              /* tamaño en móviles */
+  transform-origin: bottom right;      /* mantener esquina */
+  right: 12px !important;              /* separaciones seguras */
+  bottom: 12px !important;
+  /* opcionalmente: */
+  /* will-change: transform; */
+}
+
+/* ≥ 640px (sm) */
+@media (min-width: 640px) {
+  iframe[src*="chatbase.co"] {
+    transform: scale(1.22);
+    right: 14px !important;
+    bottom: 14px !important;
+  }
+}
+
+/* ≥ 768px (md) */
+@media (min-width: 768px) {
+  iframe[src*="chatbase.co"] {
+    transform: scale(1.32);
+    right: 16px !important;
+    bottom: 16px !important;
+  }
+}
+
+/* ≥ 1024px (lg) */
+@media (min-width: 1024px) {
+  iframe[src*="chatbase.co"] {
+    transform: scale(1.42);
+    right: 18px !important;
+    bottom: 18px !important;
+  }
+}
+
+/* ≥ 1280px (xl) */
+@media (min-width: 1280px) {
+  iframe[src*="chatbase.co"] {
+    transform: scale(1.5);
+    right: 20px !important;
+    bottom: 20px !important;
+  }
+}
