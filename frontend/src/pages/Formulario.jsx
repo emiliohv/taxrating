@@ -353,7 +353,7 @@ const Formulario = () => {
                   value={contact.name}
                   onChange={handleContactChange}
                   className="border p-2 rounded w-full"
-                  placeholder="Ej: Juan Pérez o ABC SL"
+                  placeholder=""
                 />
               </label>
 
@@ -365,7 +365,7 @@ const Formulario = () => {
                   value={contact.email}
                   onChange={handleContactChange}
                   className="border p-2 rounded w-full"
-                  placeholder="tucorreo@dominio.com"
+                  placeholder=""
                 />
               </label>
 
@@ -377,7 +377,7 @@ const Formulario = () => {
                   value={contact.phone}
                   onChange={handleContactChange}
                   className="border p-2 rounded w-full"
-                  placeholder="+34 6XX XXX XXX"
+                  placeholder=""
                 />
               </label>
 
