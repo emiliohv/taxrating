@@ -353,7 +353,7 @@ const Formulario = () => {
                   value={contact.name}
                   onChange={handleContactChange}
                   className="border p-2 rounded w-full"
-                  placeholder="Ej: Marta López o ABC S.L."
+                  placeholder="Ej: Juan Pérez o ABC SL"
                 />
               </label>
 
@@ -400,7 +400,7 @@ const Formulario = () => {
                   value={contact.message}
                   onChange={handleContactChange}
                   className="border p-2 rounded w-full min-h-[120px]"
-                  placeholder="Explícanos brevemente tu situación. Este texto se enviará como cuerpo del correo."
+                  placeholder="Explícanos brevemente en qué podemos ayudarte"
                 />
               </label>
 
