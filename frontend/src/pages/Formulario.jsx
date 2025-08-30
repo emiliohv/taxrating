@@ -32,8 +32,8 @@ const Formulario = () => {
 
   const [enviado, setEnviado] = useState(false);
   const [error, setError] = useState("");
+  const [sending, setSending] = useState(false); // NUEVO
 
-  // ---------- util NIF (igual que tenías) ----------
   const validarNIF = (nif) => {
     nif = (nif || "").toUpperCase();
     const dniRegex = /^[0-9]{8}[A-Z]$/;
@@ -52,12 +52,11 @@ const Formulario = () => {
       const letraCalculada = letras[numero % 23];
       return nif.charAt(8) === letraCalculada;
     } else if (cifRegex.test(nif)) {
-      return true; // formato básico válido
+      return true;
     }
     return false;
   };
 
-  // ---------- handlers ----------
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -65,7 +64,7 @@ const Formulario = () => {
     setContact({ ...contact, [e.target.name]: e.target.value });
   };
 
-  // ---------- submit gestoría ----------
+  // ---------- submit gestoría (sin cambios funcionales) ----------
   const handleSubmitGestoria = async (e) => {
     e.preventDefault();
     setError("");
@@ -104,7 +103,7 @@ const Formulario = () => {
     }
   };
 
-  // ---------- submit cliente ----------
+  // ---------- submit cliente (ENVÍA A MAKE) ----------
   const handleSubmitCliente = async (e) => {
     e.preventDefault();
     setError("");
@@ -122,27 +121,39 @@ const Formulario = () => {
       return;
     }
 
+    const MAKE_WEBHOOK_CLIENTE = import.meta.env.VITE_MAKE_WEBHOOK_CLIENTE;
+    if (!MAKE_WEBHOOK_CLIENTE) {
+      setError("Configuración incompleta: falta la URL del webhook.");
+      return;
+    }
+
     try {
-      await axios.post("https://taxrating-backend.onrender.com/contacto", {
+      setSending(true);
+      await axios.post(MAKE_WEBHOOK_CLIENTE, {
+        type: "contacto_cliente",
         name: contact.name,
         email: contact.email,
-        phone: contact.phone,
-        subject: contact.subject,
-        message: contact.message,
+        phone: contact.phone || "",
+        subject: contact.subject || "",
+        message: contact.message || "",
         recaptcha: recaptchaToken,
+        //admin_email: import.meta.env.VITE_ADMIN_EMAIL || "",  opcional
+        createdAt: new Date().toISOString(),
       });
       setEnviado(true);
       setError("");
     } catch (err) {
-      console.error("Respuesta del servidor:", err.response);
+      console.error("Contacto cliente error:", err?.response || err?.message);
       const detail = err.response?.data?.detail;
-      if (Array.isArray(detail)) {
-        setError(detail.map((d) => d.msg).join(" | "));
-      } else if (typeof detail === "string") {
-        setError(detail);
-      } else {
-        setError("No se pudo enviar tu mensaje. Intenta más tarde.");
-      }
+      setError(
+        Array.isArray(detail)
+          ? detail.map((d) => d.msg).join(" | ")
+          : typeof detail === "string"
+          ? detail
+          : "No se pudo enviar tu mensaje. Intenta más tarde."
+      );
+    } finally {
+      setSending(false);
     }
   };
 
@@ -172,7 +183,7 @@ const Formulario = () => {
       <div className="max-w-4xl mx-auto p-6">
         <h1 className="text-2xl font-bold mb-4 text-center">Formulario</h1>
 
-        {/* Selector de perfil: mismos estilos que en FAQs */}
+        {/* Selector de perfil */}
         <div className="flex justify-center gap-4 mb-6">
           <button
             onClick={() => {
@@ -211,7 +222,7 @@ const Formulario = () => {
           </button>
         </div>
 
-        {/* Bloque de errores global */}
+        {/* Errores */}
         {error && (
           <div className="max-w-xl mx-auto bg-red-100 border border-red-300 text-red-700 px-4 py-2 rounded text-sm text-center mb-4">
             {error}
@@ -411,10 +422,11 @@ const Formulario = () => {
 
               <button
                 type="submit"
-                style={{ backgroundColor: "#002663", color: "white" }}
+                disabled={sending}
+                style={{ backgroundColor: "#002663", color: "white", opacity: sending ? 0.7 : 1 }}
                 className="py-2 rounded hover:opacity-90"
               >
-                Enviar mensaje
+                {sending ? "Enviando..." : "Enviar mensaje"}
               </button>
             </form>
           </div>
